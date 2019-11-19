@@ -14,7 +14,7 @@ func initialize():
 	
 	var hp_container = vboxcontainer.get_child(1)
 	_current_hp_label = hp_container.get_child(1)
-	update_hp_label(30)
+	update_hp_label(10)
 
 
 

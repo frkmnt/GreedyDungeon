@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Objects/Powerup/BetterMoney/BetterMoney.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Visual/Powerup/BetterMoney.png" type="Texture" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 200.087, 200.075 )
+
+[node name="BetterMoney" type="Area2D"]
+scale = Vector2( 0.05, 0.05 )
+collision_layer = 0
+collision_mask = 64
+script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+

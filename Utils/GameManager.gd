@@ -49,10 +49,12 @@ func initialize_ui_manager():
 
 # Logic
 
-func update_all_node_positions(speed): # to handle the floors/player always moving
-	_player.position.x -= speed
-	_level_manager.update_room_positions(speed)
-	_enemy_manager.update_enemy_positions(speed)
+func update_all_node_positions(speed): # to handle the floors/player always movin
+	if _level_manager.can_move_world():
+		_player.position.x -= speed
+		_level_manager.update_room_positions(-speed)
+		_enemy_manager.update_enemy_positions(-speed)
+
 
 
 

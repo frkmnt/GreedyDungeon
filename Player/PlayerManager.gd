@@ -9,7 +9,7 @@ var _weapon
 
 
 #==== META CONTROLLER ====#
-var _max_hp = 30
+var _max_hp = 10
 var _current_hp = _max_hp
 
 var _max_jumps = 2
@@ -37,15 +37,14 @@ var _facing_direction = 1 # right
 #==== PHYSICS CONTROLLER ====#
 
 const _GRAVITY = 700.0 # pixels/second
-const _FLOOR_ANGLE_TOLERANCE = 40
 const _WALK_FORCE = 500
-const _WALK_MIN_SPEED = 100
-const _WALK_MAX_SPEED = 175
-const _STOP_FORCE = 2000
+const _STOP_FORCE = 1500
 const _JUMP_SPEED = 270
 const _SLIDE_STOP_VELOCITY = 3.0 # pixels/second
 const _SLIDE_STOP_MIN_TRAVEL = 1.0 # one pixel
 const _PLAYER_SCALE = 0.8
+var _walk_min_speed = 100
+var _walk_max_speed = 176
 
 var _velocity = Vector2()
 var _delta = 0
@@ -79,12 +78,17 @@ func initialize_weapons():
 	_weapon.inititialize()
 
 
-func _physics_process(delta):
-	_delta = delta
+func _process(delta):
+	pass
 	_input_handler.process_all_inputs()
 	handle_player_logic()
-	handle_player_physics()
 	handle_world_positions()
+
+
+
+func _physics_process(delta):
+	_delta = delta
+	handle_player_physics()
 
 
 
@@ -93,7 +97,7 @@ func _physics_process(delta):
 
 func handle_player_physics():
 	_is_stoping = true
-	var force = get_horizontal_force()
+	var force = get_movement_force()
 	if _is_stoping:
 		stop_movement()
 	
@@ -104,7 +108,7 @@ func handle_player_physics():
 	_velocity = move_and_slide(_velocity, Vector2(0, -1))
 
 
-func get_horizontal_force():
+func get_movement_force():
 	var force = Vector2(0, _GRAVITY)
 	if not _is_stunned and _can_move:
 		var walk_left = _input_handler.directional_input_buffer.has("left")
@@ -123,11 +127,11 @@ func get_horizontal_force():
 func walk_left(force):
 	if _current_action == "neutral" or not _is_on_floor:
 		move()
-		if abs(_velocity.x) < _WALK_MAX_SPEED:
+		if abs(_velocity.x) < _walk_max_speed:
 			force.x -= _WALK_FORCE
 			_is_stoping = false
 		else:
-			_velocity.x = _WALK_MAX_SPEED * _facing_direction
+			_velocity.x = _walk_max_speed * _facing_direction
 		
 		if _current_action == "neutral":
 			if _facing_direction == 1:
@@ -139,11 +143,11 @@ func walk_left(force):
 func walk_right(force):
 	if _current_action == "neutral" or not _is_on_floor:
 		move()
-		if abs(_velocity.x) < _WALK_MAX_SPEED:
+		if abs(_velocity.x) < _walk_max_speed:
 			force.x += _WALK_FORCE
 			_is_stoping = false
 		else:
-			_velocity.x = _WALK_MAX_SPEED * _facing_direction
+			_velocity.x = _walk_max_speed * _facing_direction
 		
 		if _current_action == "neutral":
 			if _facing_direction == -1:
@@ -164,8 +168,6 @@ func stop_movement():
 func handle_world_positions(): #Camera moves when player is on the screen edge
 	if position.x > 200:
 		var speed = 2
-		if position.x > 220:
-			speed = 3
 		_overseer.update_all_node_positions(speed)
 
 
@@ -180,8 +182,8 @@ func _on_hurtbox_entered(area):
 	if area.has_method("get_type"):
 		match area.get_type():
 			"money":
-				area.player_touched_money(self)
-				update_money()
+				add_money(area._value)
+				area.queue_free()
 			
 			"exit_portal":
 				_is_touching_exit_portal = true
@@ -297,7 +299,6 @@ func attack():
 
 func skill():
 	if _input_handler.input_skill == 1:
-		_is_stunned = true
 		_current_action = "skill"
 		_animator.play("shortsword_up_air")
 
@@ -326,22 +327,31 @@ func check_if_dead():
 
 #===== Meta Handling =====#
 
-func update_money():
+func add_money(value):
+	_current_money += value
 	_overseer._ui_manager.update_money_value(_current_money)
+
+
+func fill_hp():
+	_current_hp = _max_hp
+	update_hp()
+
+func update_hp():
+	_overseer._ui_manager.update_hp_value(_current_hp)
 
 
 func receive_attack(attack):
 	_current_hp -= attack._damage
-	_overseer._ui_manager.update_hp_value(_current_hp)
+	update_hp()
 	check_if_dead()
 	
-	var is_enemy_on_right = position.x < attack.get_parent().position.x
+	var is_enemy_on_right = position.x < attack.get_parent().global_position.x
 	if is_enemy_on_right:
-		_velocity.x = attack._knockback.x * -1
-		_velocity.y = attack._knockback.y
+		_velocity.x = attack._knockback_force.x * -1
+		_velocity.y = attack._knockback_force.y
 	else:
-		_velocity.x = attack._knockback.x
-		_velocity.y = attack._knockback.y
+		_velocity.x = attack._knockback_force.x
+		_velocity.y = attack._knockback_force.y
 	
 	hurt()
 
@@ -350,8 +360,15 @@ func get_current_attack_values():
 	return _weapon._attack
 
 
+func increase_max_hp(value):
+	_max_hp += value
+	_current_hp += value
+	update_hp()
 
 
+func increase_movement_speed(value):
+	_walk_min_speed += value
+	_walk_max_speed += value 
 
 
 

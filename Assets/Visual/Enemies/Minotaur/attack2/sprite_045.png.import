@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Icon.2_35.png-cfc3eeeec0c4b54e838a76376547402e.stex"
+path="res://.import/sprite_045.png-cfc9291c7b8c94d0e3178b93f07334aa.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Visual/Powerup/Icon.2_35.png"
-dest_files=[ "res://.import/Icon.2_35.png-cfc3eeeec0c4b54e838a76376547402e.stex" ]
+source_file="res://Assets/Visual/Enemies/Minotaur/attack2/sprite_045.png"
+dest_files=[ "res://.import/sprite_045.png-cfc9291c7b8c94d0e3178b93f07334aa.stex" ]
 
 [params]
 

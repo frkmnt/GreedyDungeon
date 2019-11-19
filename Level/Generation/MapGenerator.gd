@@ -18,8 +18,8 @@ var _enemy_manager
 
 
 # Prefabs
-var _first_room
-var _room_prefabs = []
+var _room_prefabs = [] # The first room is index 0
+var _boss_room_prefabs = []
 var _exit_portal
 
 
@@ -27,6 +27,7 @@ var _exit_portal
 var _current_room_x_position = 0
 var _current_nr_of_rooms_generated = 0
 var _is_busy = false
+var _is_boss_room = false
 
 
 # Thread Variables
@@ -42,9 +43,11 @@ func initialize(level_manager):
 	_level_manager = level_manager
 	_enemy_manager = level_manager.get_parent().get_node("EnemyManager")
 	_money_generator = preload("res://Level/Generation/MoneyGenerator.gd").new()
+	_money_generator.initialize()
 	_room_container = get_parent().get_child(1)
 	load_object_prefabs()
 	inititalize_floors()
+	initialize_boss_floors()
 	initialize_thread()
 
 
@@ -70,6 +73,21 @@ func inititalize_floors():
 		file_name = directory.get_next()
 
 
+func initialize_boss_floors():
+	var directory = Directory.new()
+	directory.open("res://Level/Rooms/BossRoomList")
+	directory.list_dir_begin(true)
+	
+	var room_prefab
+	var file_name = directory.get_next()
+	while (file_name != ""):
+		print("Loading floor: " + directory.get_current_dir() + "/" + file_name)
+		if file_name != "TemplateRoom.tscn":
+			room_prefab = load(directory.get_current_dir() + "/" + file_name)
+			_boss_room_prefabs.append(room_prefab)
+		file_name = directory.get_next()
+
+
 
 func initialize_thread():
 	_mutex = Mutex.new()
@@ -81,7 +99,7 @@ func initialize_thread():
 
 
 
-# Logic
+# Thread
 
 func generate_new_room(data): # The threaded function
 	while true:
@@ -89,22 +107,28 @@ func generate_new_room(data): # The threaded function
 		_mutex.lock()
 		_is_busy = true
 		
-		var room_instance = spawn_random_floor()
-		
+		var room_instance = spawn_random_room()
 		place_room( \
 			room_instance, 700+_level_manager.get_oldest_room_offset())
 		_level_manager.remove_oldest_room() 
 		_level_manager._instantiated_rooms.append(room_instance)
-		spawn_random_enemy_in_room(room_instance)
+		
+		if _is_boss_room:
+			spawn_boss_in_room(room_instance)
+		else:
+			spawn_random_enemy_in_room(room_instance)
 		
 		_room_container.add_child(room_instance)
-		
 		
 		_is_busy = false
 		_mutex.unlock()
 		
 
 
+
+
+
+# Logic
 
 func spawn_first_room():
 	var room_instance = _room_prefabs[0].instance()
@@ -115,16 +139,51 @@ func spawn_first_room():
 	return room_instance
 
 
-func spawn_random_floor():
+func spawn_starter_room(): # no chests or portals
 	_current_nr_of_rooms_generated += 1
-	var room_instance = get_random_room().instance()
+	var room_instance
+	room_instance = get_random_room().instance()
 	room_instance.initialize()
-	decorate_room(room_instance) #CHANGE TO THREAD SAFE
+	decorate_room(room_instance)
 	_money_generator.generate_loot_in_room(room_instance, _current_nr_of_rooms_generated)
-	if _current_nr_of_rooms_generated % 10 == 0:
-		generate_exit_portal(room_instance)
+	return room_instance
+
+
+
+
+
+func spawn_random_room():
+	_current_nr_of_rooms_generated += 1
+	_is_boss_room = false
+	
+	var room_instance
+	if _current_nr_of_rooms_generated % 10 == 1: # boss room
+		room_instance = spawn_boss_room()
+		_is_boss_room = true
+	else:
+		room_instance = spawn_normal_room()
 	
 	return room_instance
+
+
+func spawn_normal_room():
+	var room_instance
+	room_instance = get_random_room().instance()
+	room_instance.initialize()
+	decorate_room(room_instance)
+	_money_generator.generate_loot_in_room(room_instance, _current_nr_of_rooms_generated)
+	if _current_nr_of_rooms_generated % 10 == 0: # portal room
+		generate_exit_portal(room_instance)
+	return room_instance
+
+
+func spawn_boss_room():
+	var room_instance
+	room_instance = get_random_boss_room().instance()
+	room_instance.initialize()
+	decorate_room(room_instance)
+	return room_instance
+
 
 
 
@@ -133,8 +192,15 @@ func spawn_random_floor():
 func get_random_room():
 	randomize()
 	var random_room_index = floor(rand_range(1, _room_prefabs.size()))
-	print("Generating Room ", random_room_index+1, ".")
+	print("Generating Room ", random_room_index+1, ".\n")
 	return _room_prefabs[random_room_index]
+
+
+func get_random_boss_room():
+	var random_room_index = 0
+	print("Generating Boss Room ", random_room_index+1, ".\n")
+	return _boss_room_prefabs[random_room_index]
+
 
 
 func generate_exit_portal(room_instance):
@@ -160,6 +226,14 @@ func spawn_random_enemy_in_room(room_instance):
 		enemy_prefab.position = coordinates
 		_enemy_manager.add_enemy(enemy_prefab)
 
+
+func spawn_boss_in_room(room_instance):
+	_level_manager._is_currently_boss_battle = true
+	room_instance._has_boss = true
+	var boss_instance = room_instance.get_child(2)
+	boss_instance.position.x += room_instance.position.x
+	room_instance.remove_child(boss_instance)
+	_enemy_manager.add_enemy(boss_instance)
 
 
 #====MAP DECORATION ====#

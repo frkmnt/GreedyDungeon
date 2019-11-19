@@ -20,7 +20,3 @@ func initialize(value, sprite):
 
 func get_type():
 	return _TYPE
-
-func player_touched_money(player):
-	player._current_money += _value
-	queue_free()

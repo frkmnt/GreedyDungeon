@@ -27,7 +27,7 @@ func initialize_enemy_spawner():
 
 func update_enemy_positions(speed):
 	for enemy in _enemy_container.get_children():
-		enemy.position.x -= speed
+		enemy.position.x += speed
 
 
 func add_enemy(enemy):

@@ -2,7 +2,7 @@ extends Node
 
 # Components
 var _hud_manager
-var _camera
+var _camera # The camera is static, the world moves backward
 
 
 func initialize():
@@ -16,3 +16,4 @@ func update_money_value(value):
 
 func update_hp_value(value):
 	_hud_manager.update_hp_label(value)
+
