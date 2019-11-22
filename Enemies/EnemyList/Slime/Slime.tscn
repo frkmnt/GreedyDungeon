@@ -1,0 +1,274 @@
+[gd_scene load_steps=30 format=2]
+
+[ext_resource path="res://Enemies/EnemyList/Slime/Slime.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/move/slime-move-1.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/attack/slime-attack-0.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/attack/slime-attack-1.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/attack/slime-attack-2.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/attack/slime-attack-3.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/attack/slime-attack-4.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/die/slime-die-0.png" type="Texture" id=8]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/die/slime-die-1.png" type="Texture" id=9]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/die/slime-die-2.png" type="Texture" id=10]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/die/slime-die-3.png" type="Texture" id=11]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/hurt/slime-hurt-0.png" type="Texture" id=12]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/hurt/slime-hurt-1.png" type="Texture" id=13]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/hurt/slime-hurt-2.png" type="Texture" id=14]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/hurt/slime-hurt-3.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/move/slime-move-0.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/move/slime-move-2.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Visual/Enemies/Slime/move/slime-move-3.png" type="Texture" id=18]
+[ext_resource path="res://Enemies/EnemyList/Slime/SlimeAttack.gd" type="Script" id=19]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 11.4439, 6.41485 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 16, 8 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 16, 12.5774 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 16, 8 )
+
+[sub_resource type="Animation" id=5]
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../Hitbox/HitboxShape:shape")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ SubResource( 2 ), SubResource( 3 ), SubResource( 4 ) ]
+}
+tracks/2/type = "method"
+tracks/2/path = NodePath("..")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.5 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "set_state_neutral"
+} ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("../Hitbox/HitboxShape:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ Vector2( 0, 5 ), Vector2( -0.166084, 0.847916 ), Vector2( 0, 5 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("../Hitbox/HitboxShape:disabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0.1, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[sub_resource type="Animation" id=6]
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ) ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.4 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "die"
+} ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../Hurtbox/HurtboxShape:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ true ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("..:collision_mask")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 1 ]
+}
+
+[sub_resource type="Animation" id=7]
+length = 0.4
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ) ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.4 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "set_state_neutral"
+} ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../Hitbox/HitboxShape:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+
+[sub_resource type="Animation" id=8]
+length = 0.4
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ ExtResource( 16 ), ExtResource( 2 ), ExtResource( 17 ), ExtResource( 18 ) ]
+}
+
+[sub_resource type="RectangleShape2D" id=9]
+extents = Vector2( 16, 8 )
+
+[sub_resource type="RectangleShape2D" id=10]
+extents = Vector2( 5, 10 )
+
+[node name="Slime" type="KinematicBody2D"]
+z_index = 1
+collision_layer = 0
+collision_mask = 3
+script = ExtResource( 1 )
+
+[node name="SlimeShape" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 4.65 )
+shape = SubResource( 1 )
+
+[node name="VisibilityEnabler2D" type="VisibilityEnabler2D" parent="."]
+visible = false
+position = Vector2( 0.166092, 4.15208 )
+scale = Vector2( 1.38199, 0.734267 )
+process_parent = true
+physics_process_parent = true
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite"]
+anims/attack = SubResource( 5 )
+anims/die = SubResource( 6 )
+anims/hurt = SubResource( 7 )
+anims/move = SubResource( 8 )
+
+[node name="Hitbox" type="Area2D" parent="."]
+visible = false
+monitoring = false
+collision_layer = 0
+collision_mask = 4
+script = ExtResource( 19 )
+
+[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2( 0, 5 )
+shape = SubResource( 4 )
+disabled = true
+
+[node name="Hurtbox" type="Area2D" parent="."]
+visible = false
+collision_layer = 16
+collision_mask = 0
+
+[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2( 0, 5 )
+shape = SubResource( 9 )
+
+[node name="TurnAroundArea" type="Area2D" parent="."]
+position = Vector2( -30, 11 )
+collision_layer = 8
+collision_mask = 0
+
+[node name="TurnAroundShape" type="CollisionShape2D" parent="TurnAroundArea"]
+shape = SubResource( 10 )
+
+[connection signal="area_entered" from="Hurtbox" to="." method="received_hit"]
+[connection signal="body_entered" from="TurnAroundArea" to="." method="entered_turn_around_area"]
+[connection signal="body_exited" from="TurnAroundArea" to="." method="exited_turn_around_area"]

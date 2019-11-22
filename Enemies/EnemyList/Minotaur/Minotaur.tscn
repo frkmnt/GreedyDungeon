@@ -61,16 +61,16 @@
 [ext_resource path="res://Assets/Visual/Enemies/Minotaur/move/sprite_011.png" type="Texture" id=59]
 [ext_resource path="res://Enemies/EnemyList/Minotaur/MinotaurAttack.gd" type="Script" id=60]
 
-[sub_resource type="RectangleShape2D" id=24]
+[sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 29.3426, 28.9609 )
 
-[sub_resource type="RectangleShape2D" id=22]
+[sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 29.3426, 28.9609 )
 
-[sub_resource type="RectangleShape2D" id=23]
+[sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 17.3229, 28.9609 )
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=4]
 resource_name = "attack1"
 length = 1.4
 tracks/0/type = "value"
@@ -95,7 +95,7 @@ tracks/1/keys = {
 "times": PoolRealArray( 0.7, 0.8, 0.9 ),
 "transitions": PoolRealArray( 1, 1, 1 ),
 "update": 1,
-"values": [ SubResource( 24 ), SubResource( 22 ), SubResource( 23 ) ]
+"values": [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ) ]
 }
 tracks/2/type = "value"
 tracks/2/path = NodePath("../Hitbox/HitboxShape:position")
@@ -136,7 +136,7 @@ tracks/4/keys = {
 } ]
 }
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=5]
 resource_name = "attack2"
 length = 0.3
 tracks/0/type = "value"
@@ -202,10 +202,10 @@ tracks/4/keys = {
 } ]
 }
 
-[sub_resource type="RectangleShape2D" id=7]
+[sub_resource type="RectangleShape2D" id=6]
 extents = Vector2( 17.8674, 6.45512 )
 
-[sub_resource type="RectangleShape2D" id=2]
+[sub_resource type="RectangleShape2D" id=7]
 extents = Vector2( 13.1109, 6.45512 )
 
 [sub_resource type="Animation" id=8]
@@ -233,7 +233,7 @@ tracks/1/keys = {
 "times": PoolRealArray( 0.2, 0.3 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
-"values": [ SubResource( 7 ), SubResource( 2 ) ]
+"values": [ SubResource( 6 ), SubResource( 7 ) ]
 }
 tracks/2/type = "value"
 tracks/2/path = NodePath("../Hitbox/HitboxShape:position")
@@ -346,7 +346,7 @@ tracks/2/keys = {
 } ]
 }
 
-[sub_resource type="Animation" id=12]
+[sub_resource type="Animation" id=11]
 resource_name = "idle"
 length = 0.6
 tracks/0/type = "value"
@@ -376,8 +376,7 @@ tracks/1/keys = {
 } ]
 }
 
-[sub_resource type="Animation" id=11]
-resource_name = "recover"
+[sub_resource type="Animation" id=12]
 length = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:texture")
@@ -585,20 +584,20 @@ radius = 21.3662
 [node name="Minotaur" type="KinematicBody2D"]
 z_index = 1
 collision_layer = 0
-collision_mask = 9
+collision_mask = 3
 script = ExtResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite"]
-anims/attack1 = SubResource( 5 )
-anims/attack2 = SubResource( 6 )
+anims/attack1 = SubResource( 4 )
+anims/attack2 = SubResource( 5 )
 anims/attack3 = SubResource( 8 )
 anims/death = SubResource( 9 )
 anims/hurt = SubResource( 10 )
-anims/idle = SubResource( 12 )
-anims/recover = SubResource( 11 )
+anims/idle = SubResource( 11 )
+anims/recover = SubResource( 12 )
 anims/spin_to_win = SubResource( 16 )
 anims/spin_to_win_recover = SubResource( 17 )
 anims/walk = SubResource( 18 )
@@ -624,7 +623,7 @@ _damage = 2
 
 [node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
 position = Vector2( 28.7348, 1.96614 )
-shape = SubResource( 2 )
+shape = SubResource( 7 )
 disabled = true
 
 [node name="Hurtbox" type="Area2D" parent="."]

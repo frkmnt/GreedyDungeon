@@ -140,7 +140,7 @@ func spawn_first_room():
 
 
 func spawn_starter_room(): # no chests or portals
-	_current_nr_of_rooms_generated += 1
+	#_current_nr_of_rooms_generated += 1
 	var room_instance
 	room_instance = get_random_room().instance()
 	room_instance.initialize()

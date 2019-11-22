@@ -66,13 +66,16 @@ func generate_loot_in_room(room, room_number):
 	randomize_money_in_room(room, money_odds)
 
 
+##TO DO 
+# CHESTS SPAWN WITH A PERCENTAGE INCREASE EACH TIME 
+# YOU MISS A CHEST
 
 # Chests
 
 func randomize_chests_in_room(room, room_number):
 	randomize()
 	var random_chest_index = floor(rand_range(6, 201))
-	if random_chest_index <= room_number*2:
+	if random_chest_index <= room_number*3:
 		var chest_instance = _CHEST_PREFAB.instance()
 		chest_instance.initialize(get_random_powerup().instance())
 		var random_position_index = floor(rand_range(0, room._CHEST_POSITIONS.size()))

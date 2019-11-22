@@ -36,6 +36,7 @@ var _max_spins = 3
 var _current_spins = 0
 var _current_idles = 0
 var _can_move = false
+var _random_attack_index = 50 # only used in stg3 to set the first attack as spin to win
 
 var _recovery_quantity = 3
 var _current_recovery = 0
@@ -156,12 +157,13 @@ func apply_current_stage_attack():
 	if is_player_in_attack_range():
 		_current_action = "attack"
 		_can_turn = false
-		_is_immune = true
 		_current_recovery = 0
+		
+		randomize()
 		
 		if _current_stage == 1: # Stage 1
 			_is_stoping = true
-			_minotaur_attack._damage = 2
+			_minotaur_attack._damage = 1
 			_minotaur_attack._knockback_force = Vector2(400, -300)
 			_recovery_quantity = 4
 			_animation_tree.play("attack1") 
@@ -176,20 +178,19 @@ func apply_current_stage_attack():
 				_animation_tree.play("attack1")
 			else:
 				_is_stoping = true
-				_minotaur_attack._damage = 2
+				_minotaur_attack._damage = 1
 				_minotaur_attack._knockback_force = Vector2(300, 0)
 				_recovery_quantity = 3
 				_animation_tree.play("attack3")
 			
 		else: # Stage 3
-			var random_attack_index = floor(rand_range(0, 100))
-			if random_attack_index <= 30:
+			if _random_attack_index <= 30:
 				_is_stoping = true
 				_minotaur_attack._damage = 2
 				_minotaur_attack._knockback_force = Vector2(300, 0)
 				_recovery_quantity = 1
 				_animation_tree.play("attack3")
-			elif random_attack_index <= 70:
+			elif _random_attack_index <= 70:
 				_minotaur_attack._damage = 1
 				_minotaur_attack._knockback_force = Vector2(600, -200)
 				_previous_max_walk_force = _max_walk_force 
@@ -208,6 +209,7 @@ func apply_current_stage_attack():
 				_minotaur_attack._knockback_force = Vector2(500, -400)
 				_recovery_quantity = 3
 				_animation_tree.play("attack1")
+			_random_attack_index = randi() % 100 + 1 # returns random integer between 1 and 100
 
 
 func spin_to_win():

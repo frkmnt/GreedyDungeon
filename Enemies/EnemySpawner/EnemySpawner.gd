@@ -4,14 +4,16 @@ extends Node2D
 var _enemy_prefabs = []
 
 var _skeleton
-
+var _slime
 
 
 
 func initialize():
 	_skeleton = preload("res://Enemies/EnemyList/Skeleton/Skeleton.tscn")
 	_enemy_prefabs.append(_skeleton)
-
+	
+	_slime = preload("res://Enemies/EnemyList/Slime/Slime.tscn")
+	_enemy_prefabs.append(_slime)
 
 
 func get_random_enemy():

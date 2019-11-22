@@ -18,8 +18,8 @@ script = ExtResource( 2 )
 [node name="RoomContainer" type="Node2D" parent="."]
 
 [node name="PlayerLimitLeft" type="StaticBody2D" parent="."]
-collision_layer = 2
-collision_mask = 0
+collision_layer = 0
+collision_mask = 2
 
 [node name="PlayerLimitLeftShape" type="CollisionShape2D" parent="PlayerLimitLeft"]
 position = Vector2( 0, 95 )
@@ -27,8 +27,8 @@ shape = SubResource( 1 )
 one_way_collision_margin = 0.0
 
 [node name="PlayerLimitRight" type="StaticBody2D" parent="."]
-collision_layer = 2
-collision_mask = 0
+collision_layer = 0
+collision_mask = 2
 
 [node name="PlayerLimitRightShape" type="CollisionShape2D" parent="PlayerLimitRight"]
 position = Vector2( 328, 95 )

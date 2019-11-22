@@ -151,7 +151,7 @@ func stop_movement():
 
 func check_if_needs_to_be_despawned():
 	if position.x <= -100 or position.y <= -100:
-		print("Enemy moved off limits, despawning...")
+		print("Enemy ", name, " moved off limits, despawning...")
 		queue_free()
 
 
@@ -185,8 +185,15 @@ func apply_knockback(body):
 
 func is_player_in_attack_range():
 	var p_position = _player.position
-	if abs(position.x - p_position.x) < 20 \
-	and abs(position.y - p_position.y) < 20:
+	var relative_player_x_pos = position.x - p_position.x
+	var player_direction = sign(relative_player_x_pos)
+	relative_player_x_pos = abs(relative_player_x_pos)
+	var relative_player_y_pos = abs(position.y - p_position.y)
+	
+	
+	if relative_player_x_pos < 20 \
+	and relative_player_y_pos < 20 \
+	and player_direction != _facing_direction:
 		_ready_to_attack = true
 	else:
 		_ready_to_attack = false
