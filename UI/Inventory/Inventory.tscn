@@ -1,0 +1,17 @@
+[gd_scene format=2]
+
+[node name="Inventory" type="Panel"]
+margin_right = 420.0
+margin_bottom = 196.0
+
+[node name="Items" type="Panel" parent="."]
+anchor_right = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = 186.0
+
+[node name="Button" type="Button" parent="Items"]
+margin_right = 32.0
+margin_bottom = 32.0
+

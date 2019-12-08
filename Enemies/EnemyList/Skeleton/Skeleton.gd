@@ -70,6 +70,7 @@ func handle_state_logic():
 
 func set_state_neutral():
 	_current_action = "walk"
+	_ready_to_attack = false
 	_is_knockback = false
 	_is_stoping = false
 	_animation_tree.play("walk", -1, 1.5)
@@ -190,12 +191,13 @@ func is_player_in_attack_range():
 	relative_player_x_pos = abs(relative_player_x_pos)
 	var relative_player_y_pos = abs(position.y - p_position.y)
 	
-	
-	if relative_player_x_pos < 20 \
-	and relative_player_y_pos < 20 \
-	and player_direction != _facing_direction:
-		_ready_to_attack = true
-	else:
-		_ready_to_attack = false
+	if relative_player_y_pos < 25:
+		if player_direction != _facing_direction:
+			if relative_player_x_pos < 20:
+				_ready_to_attack = true
+		elif relative_player_x_pos < 5:
+			_ready_to_attack = true
+		
+
 
 

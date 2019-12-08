@@ -4,20 +4,20 @@ extends KinematicBody2D
 var _animation_tree 
 var _sprite
 var _visibility_enabler
+var _turn_around_cast
 
 var _player
 
 # Physics
 const _GRAVITY = 500
 const _MAX_WALK_FORCE = 20
-const _WALK_FORCE = 20
+const _WALK_FORCE = 40
 const _STOP_FORCE = 5
 
 var _delta
 var _velocity = Vector2()
 var _facing_direction = -1 #left
 var _is_stoping = false
-var _turn_around = 0
 
 
 # Meta
@@ -28,7 +28,6 @@ var _is_knockback = false
 var _ready_to_attack = false
 
 
-var _turn_around_shape
 
 #==== Bootstrap ====#
 
@@ -36,7 +35,7 @@ func _ready():
 	set_process(false)
 	set_physics_process(false)
 	
-	_turn_around_shape = $TurnAroundArea/TurnAroundShape
+	_turn_around_cast = $TurnAroundCast
 
 	
 	_sprite = $Sprite
@@ -64,8 +63,13 @@ func handle_state_logic():
 			if _ready_to_attack:
 				set_state_attack()
 			
-			elif is_on_wall() or _turn_around == 0:
+			elif not _turn_around_cast.is_colliding():
+				if is_on_floor():
+					change_direction()
+
+			elif is_on_wall():
 				change_direction()
+
 
 
 func set_state_neutral():
@@ -109,7 +113,6 @@ func die():
 #==== Physics Handling ====#
 
 func _physics_process(delta):
-	_turn_around_shape.disabled = false
 	_delta = delta
 	handle_physics()
 	check_if_needs_to_be_despawned()
@@ -193,14 +196,6 @@ func is_player_in_attack_range():
 
 
 
-func entered_turn_around_area(body):
-	print(body.name)
-	#_turn_around += 1
-	
 
-
-func exited_turn_around_area(body):
-	print("exited")
-	#_turn_around -= 1
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://Enemies/EnemyList/Slime/Slime.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Visual/Enemies/Slime/move/slime-move-1.png" type="Texture" id=2]
@@ -211,9 +211,6 @@ tracks/0/keys = {
 [sub_resource type="RectangleShape2D" id=9]
 extents = Vector2( 16, 8 )
 
-[sub_resource type="RectangleShape2D" id=10]
-extents = Vector2( 5, 10 )
-
 [node name="Slime" type="KinematicBody2D"]
 z_index = 1
 collision_layer = 0
@@ -261,14 +258,9 @@ collision_mask = 0
 position = Vector2( 0, 5 )
 shape = SubResource( 9 )
 
-[node name="TurnAroundArea" type="Area2D" parent="."]
-position = Vector2( -30, 11 )
-collision_layer = 8
-collision_mask = 0
-
-[node name="TurnAroundShape" type="CollisionShape2D" parent="TurnAroundArea"]
-shape = SubResource( 10 )
+[node name="TurnAroundCast" type="RayCast2D" parent="."]
+position = Vector2( -15, 0 )
+enabled = true
+cast_to = Vector2( 0, 15 )
 
 [connection signal="area_entered" from="Hurtbox" to="." method="received_hit"]
-[connection signal="body_entered" from="TurnAroundArea" to="." method="entered_turn_around_area"]
-[connection signal="body_exited" from="TurnAroundArea" to="." method="exited_turn_around_area"]

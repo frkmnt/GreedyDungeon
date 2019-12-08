@@ -41,7 +41,7 @@ var _random_attack_index = 50 # only used in stg3 to set the first attack as spi
 var _recovery_quantity = 3
 var _current_recovery = 0
 
-var _current_hp = 21
+var _current_hp = 30
 var _is_immune = false # boss is immune until its attack
 
 
@@ -361,7 +361,7 @@ func received_hit(body):
 		
 		if check_if_dead():
 			set_state_death()
-		elif _current_hp % 7 == 0:
+		elif _current_hp % 10 == 0:
 			set_state_hurt()
 			next_stage()
 

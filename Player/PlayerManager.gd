@@ -167,7 +167,7 @@ func stop_movement():
 
 func handle_world_positions(): #Camera moves when player is on the screen edge
 	if position.x > 200:
-		var speed = 2
+		var speed = 150 * _delta
 		_overseer.update_all_node_positions(speed)
 
 
