@@ -13,6 +13,13 @@ const _CRYSTAL_SPRITE = preload("res://Assets/Visual/Money/Crystal.png")
 const _TREASURE_SPRITE = preload("res://Assets/Visual/Money/Treasure.png")
 
 
+const _small_health_potion_prefab = preload("res://Objects/Potions/SmallHealthPotion.tscn")
+
+
+
+
+
+
 # By order of odds: coin, bag, gem, idol, crystal, treasure
 # Up to 50 floors
 const _MONEY_ODDS = [ [200], [198, 200], [196, 200], [194, 200], [192, 200], #floors 1-5
@@ -24,6 +31,7 @@ const _MONEY_ODDS = [ [200], [198, 200], [196, 200], [194, 200], [192, 200], #fl
                    ] 
 
 var _money_modifier = 0
+var _chest_modifier = 0
 
 
 # Powerups
@@ -32,7 +40,7 @@ var _money_modifier = 0
 const _DOUBLE_JUMP_PREFAB = preload("res://Objects/Powerup/Double Jump/DoubleJump.tscn")
 const _EXTRA_HEALTH_PREFAB = preload("res://Objects/Powerup/ExtraHealth/ExtraHealth.tscn")
 const _EXTRA_SPEED_PREFAB = preload("res://Objects/Powerup/ExtraSpeed/ExtraSpeed.tscn")
-const _BETTER_MONEY_PREFAB = preload("res://Objects/Powerup/BetterMoney/BetterMoney.tscn")
+
 
 var _powerup_list = []
 
@@ -45,7 +53,6 @@ func initialize():
 	_powerup_list.append(_DOUBLE_JUMP_PREFAB)
 	_powerup_list.append(_EXTRA_HEALTH_PREFAB)
 	_powerup_list.append(_EXTRA_SPEED_PREFAB)
-	_powerup_list.append(_BETTER_MONEY_PREFAB)
 
 
 
@@ -75,12 +82,71 @@ func generate_loot_in_room(room, room_number):
 func randomize_chests_in_room(room, room_number):
 	randomize()
 	var random_chest_index = floor(rand_range(6, 201))
-	if random_chest_index <= room_number*3:
-		var chest_instance = _CHEST_PREFAB.instance()
-		chest_instance.initialize(get_random_powerup().instance())
-		var random_position_index = floor(rand_range(0, room._CHEST_POSITIONS.size()))
-		chest_instance.position = room._CHEST_POSITIONS[random_position_index]
-		room.add_child(chest_instance)
+	random_chest_index = 1
+	if random_chest_index - _chest_modifier <= room_number*3:
+		spawn_random_chest(room)
+		_chest_modifier = 0
+	else:
+		_chest_modifier += 1
+
+
+func spawn_random_chest(room):
+	var chest_instance = _CHEST_PREFAB.instance()
+	var chest_item = spawn_random_chest_contents()
+	chest_instance.initialize(chest_item)
+	var random_position_index = floor(rand_range(0, room._CHEST_POSITIONS.size()))
+	chest_instance.position = room._CHEST_POSITIONS[random_position_index]
+	room.add_child(chest_instance)
+
+
+func spawn_random_chest_contents():
+	var item_type_id = floor(rand_range(1, 100))
+	var item
+	
+	if item_type_id < 30:
+		item = spawn_potion()
+		#item = spawn_high_value_money()
+	elif item_type_id < 70:
+		item = spawn_potion()
+	elif item_type_id < 80:
+		item = spawn_potion()
+	elif item_type_id < 90:
+		item = spawn_potion()
+	else:
+		item = spawn_potion()
+	
+	return item
+
+
+
+func spawn_high_value_money():
+	var money_instance = _MONEY_PREFAB.instance()  
+	var random_money_index = floor(rand_range(0, 201)) + _money_modifier
+	if random_money_index > 200:
+		random_money_index = 200
+	
+	if random_money_index > 70:
+		set_money_prefab_as_gem(money_instance)
+	elif random_money_index > 140:
+		set_money_prefab_as_crystal(money_instance)
+	else:
+		set_money_prefab_as_idol(money_instance)
+	return money_instance
+
+
+func spawn_potion():
+	var potion_instance  # 10 to 40
+	#var random_potion_index = floor(rand_range(10, 40)) + _money_modifier
+	var random_potion_index = 10
+	if random_potion_index == 10:
+		potion_instance = _small_health_potion_prefab.instance()
+	return potion_instance
+
+
+
+
+
+
 
 
 func get_random_powerup():
@@ -92,11 +158,17 @@ func get_random_powerup():
 
 
 
-# Money
+
+
+
+
+
+
+#=== Money ===
 
 func randomize_money_in_room(room, money_odds):
+	randomize()
 	for money_prefab in room._money_container.get_children():
-		randomize()
 		var random_money_index = floor(rand_range(0, 201)) + _money_modifier
 		if random_money_index > 200:
 			random_money_index = 200
@@ -111,25 +183,24 @@ func randomize_money_in_room(room, money_odds):
 				set_money_prefab_as_idol(money_prefab)
 			elif random_money_index <= money_odds[5]:
 				set_money_prefab_as_treasure(money_prefab)
-		
 
 
 
 func set_money_prefab_as_bag(money_prefab):
-	money_prefab.initialize(10, _BAG_SPRITE)
+	money_prefab.initialize(2, "Bag", "A hefty bag of coins.", _BAG_SPRITE, 10, 25)
 
 
 func set_money_prefab_as_gem(money_prefab):
-	money_prefab.initialize(25, _GEM_SPRITE)
+	money_prefab.initialize(3, "Gem", "A semi precious stone.", _GEM_SPRITE, 25, 10)
 
 
 func set_money_prefab_as_crystal(money_prefab):
-	money_prefab.initialize(50, _CRYSTAL_SPRITE)
+	money_prefab.initialize(4, "Crystal", "A rare crystal procured for its curious effects.", _CRYSTAL_SPRITE, 50, 5)
 
 
 func set_money_prefab_as_idol(money_prefab):
-	money_prefab.initialize(100, _IDOL_SPRITE)
+	money_prefab.initialize(5, "Idol", "An idol of imense magical properties.", _IDOL_SPRITE, 100, 3)
 
 
 func set_money_prefab_as_treasure(money_prefab):
-	money_prefab.initialize(250, _TREASURE_SPRITE)
+	money_prefab.initialize(6, "Treasure", "A chest full of unbelievable treasures.", _TREASURE_SPRITE, 250, 1)

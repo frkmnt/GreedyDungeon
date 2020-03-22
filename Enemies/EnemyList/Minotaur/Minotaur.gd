@@ -60,7 +60,6 @@ func _ready():
 	_visibility_enabler = $VisibilityEnabler2D
 	_minotaur_attack = $Hitbox
 	
-	
 	_player = get_tree().current_scene.get_node("Player")
 	_level_manager = get_tree().current_scene.get_node("LevelManager")
 	

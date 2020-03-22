@@ -2,7 +2,14 @@ extends Node2D
 
 # This script acts as a thread and generates levels as a background process.
 
-# Constants
+#==== Components ====#
+var _level_manager
+var _money_generator
+var _room_container
+var _enemy_manager
+
+
+#==== Constants ====#
 const _MAP_HEIGHT = 25
 const _MAP_WIDTH = 25
 const _ASPECT_RATIO = 16
@@ -10,34 +17,28 @@ const _FLOOR_OFFSET = _MAP_HEIGHT * _ASPECT_RATIO
 const _MAP_RATIO = _ASPECT_RATIO * _MAP_WIDTH
 
 
-# Components
-var _level_manager
-var _money_generator
-var _room_container
-var _enemy_manager
 
-
-# Prefabs
+#==== Prefabs ====#
 var _room_prefabs = [] # The first room is index 0
 var _boss_room_prefabs = []
 var _exit_portal
 
 
-# Variables
+#==== Variables ====#
 var _current_room_x_position = 0
 var _current_nr_of_rooms_generated = 0
 var _is_busy = false
 var _is_boss_room = false
 
 
-# Thread Variables
+#==== Thread Variables ====#
 var _mutex
 var _semaphore
 var _thread
 
 
 
-# Boostrap
+#==== Boostrap ====#
 
 func initialize(level_manager): 
 	_level_manager = level_manager
@@ -99,7 +100,7 @@ func initialize_thread():
 
 
 
-# Thread
+#==== Thread ====#
 
 func generate_new_room(data): # The threaded function
 	while true:
@@ -109,12 +110,13 @@ func generate_new_room(data): # The threaded function
 		
 		var room_instance = spawn_random_room()
 		place_room( \
-			room_instance, 700+_level_manager.get_oldest_room_offset())
+			room_instance, _level_manager._room_spawn_position)
 		_level_manager.remove_oldest_room() 
 		_level_manager._instantiated_rooms.append(room_instance)
 		
 		if _is_boss_room:
 			spawn_boss_in_room(room_instance)
+			_level_manager.on_boss_room_spawn()
 		else:
 			spawn_random_enemy_in_room(room_instance)
 		
@@ -140,7 +142,7 @@ func spawn_first_room():
 
 
 func spawn_starter_room(): # no chests or portals
-	#_current_nr_of_rooms_generated += 1
+	_current_nr_of_rooms_generated += 1
 	var room_instance
 	room_instance = get_random_room().instance()
 	room_instance.initialize()
@@ -192,13 +194,13 @@ func spawn_boss_room():
 func get_random_room():
 	randomize()
 	var random_room_index = floor(rand_range(1, _room_prefabs.size()))
-	print("Generating Room ", random_room_index+1, ".\n")
+	print("\nGenerating Room ", random_room_index+1, ".")
 	return _room_prefabs[random_room_index]
 
 
 func get_random_boss_room():
 	var random_room_index = 0
-	print("Generating Boss Room ", random_room_index+1, ".\n")
+	print("\nGenerating Boss Room ", random_room_index+1, ".")
 	return _boss_room_prefabs[random_room_index]
 
 
@@ -229,7 +231,6 @@ func spawn_random_enemy_in_room(room_instance):
 
 func spawn_boss_in_room(room_instance):
 	_level_manager._is_currently_boss_battle = true
-	room_instance._has_boss = true
 	var boss_instance = room_instance.get_child(2)
 	boss_instance.position.x += room_instance.position.x
 	room_instance.remove_child(boss_instance)

@@ -11,7 +11,7 @@ extents = Vector2( 12.024, 10.6653 )
 
 [node name="Chest" type="StaticBody2D"]
 scale = Vector2( 0.7, 0.7 )
-collision_layer = 32
+collision_layer = 0
 collision_mask = 0
 script = ExtResource( 1 )
 

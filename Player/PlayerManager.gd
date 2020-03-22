@@ -1,51 +1,23 @@
 extends KinematicBody2D
 
-
-#==== COMPONENTS ====#
+#==== References ====#
 var _overseer
+var _level_manager 
+
+
+#==== Components ====#
 var _input_handler
 var _animator
 var _weapon
+var _modifier_container
+var _hitbox
+var _hurtbox
+
+var _inventory
+var _state_manager
 
 
-#==== META CONTROLLER ====#
-var _max_hp = 10
-var _current_hp = _max_hp
-
-var _max_jumps = 2
-var _number_of_jumps = 0
-var _current_money = 0
-var _is_touching_exit_portal = false
-
-var _can_move = true
-var _is_stunned = false
-
-#==== STATE CONTROLLER ====#
-var _current_action = "neutral" # neutral, jump, attack, skill
-
-var _is_on_wall = false
-var _is_on_floor = false
-var _is_on_ceiling = false
-
-var _is_stoping = false
-var _is_running = false
-var _facing_direction = 1 # right
-
-
-
-
-#==== PHYSICS CONTROLLER ====#
-
-const _GRAVITY = 700.0 # pixels/second
-const _WALK_FORCE = 500
-const _STOP_FORCE = 1500
-const _JUMP_SPEED = 270
-const _SLIDE_STOP_VELOCITY = 3.0 # pixels/second
-const _SLIDE_STOP_MIN_TRAVEL = 1.0 # one pixel
-const _PLAYER_SCALE = 0.8
-var _walk_min_speed = 100
-var _walk_max_speed = 176
-
+#==== Physics Controller ====#
 var _velocity = Vector2()
 var _delta = 0
 
@@ -61,314 +33,254 @@ func initialize():
 	initialize_input_handler()
 	initialize_animations()
 	initialize_weapons()
-	idle()
+	initialize_hitboxes()
+	initialize_inventory()
+	initialize_map_manager()
+	initialize_state_manager()
+	
+	_state_manager.set_state_idle()
 
 
 func initialize_input_handler():
-	var loaded_input_handler = preload("res://Player/Utils/InputHandler.gd")
+	var loaded_input_handler = load("res://Player/Utils/InputManager.gd") # REFACTOR USED TO BE PRELOAD, COULDA FUCKA THINGS UP
 	_input_handler = loaded_input_handler.new()
-
 
 func initialize_animations():
 	_animator = $Sprite.get_child(0)
 
-
 func initialize_weapons():
-	_weapon = $ActionHandlers/Weapon
-	_weapon.inititialize()
+	_weapon = $Weapon
+	_weapon.initialize()
 
+func initialize_hitboxes():
+	_hitbox = $Hitbox
+	_hurtbox = $Hurtbox
+
+func initialize_inventory():
+	_inventory = load("res://Player/Utils/InventoryManager.gd").new()
+	_inventory.initialize(_overseer._ui_manager._inventory_panel)
+
+func initialize_map_manager():
+	_level_manager = _overseer._level_manager
+
+func initialize_state_manager():
+	_state_manager = load("res://Player/Utils/StateManager.gd").new()
+	_state_manager.initialize(self)
+	_modifier_container = $ModifierContainer
+
+
+
+
+
+#===== Tick =====#
 
 func _process(delta):
-	pass
 	_input_handler.process_all_inputs()
-	handle_player_logic()
-	handle_world_positions()
-
+	_state_manager.handle_player_state()
+	handle_player_action()
+	handle_player_movement_action()
+	
+	
+	print(_state_manager._modifier_type_list[1])
 
 
 func _physics_process(delta):
 	_delta = delta
 	handle_player_physics()
+	_level_manager.handle_player_position(position.x)
 
 
+#REFACTOR disable collision in animator and add blink
 
 
 #===== Physics Handling =====#
 
 func handle_player_physics():
-	_is_stoping = true
-	var force = get_movement_force()
-	if _is_stoping:
-		stop_movement()
+	_state_manager._is_on_floor = is_on_floor()
+	_state_manager._is_on_ceiling = is_on_ceiling()
 	
-	if _velocity.x == 0 and _current_action == "neutral":
-		_is_running = false
-		idle()
-	_velocity += force * _delta
-	_velocity = move_and_slide(_velocity, Vector2(0, -1))
+	get_movement_force()
+	move_and_slide(_velocity*_delta, Vector2(0, -1))
 
 
 func get_movement_force():
-	var force = Vector2(0, _GRAVITY)
-	if not _is_stunned and _can_move:
-		var walk_left = _input_handler.directional_input_buffer.has("left")
-		var walk_right = _input_handler.directional_input_buffer.has("right")
-		
-		if walk_left and walk_right:
-			stop_movement()
-		elif walk_left:
-			force = walk_left(force)
-		elif walk_right:
-			force = walk_right(force)
+	apply_gravity()
 	
-	return force
+	if _state_manager._is_running and _state_manager._can_move:
+		apply_walk_force()
+	else:
+		stop_movement()
 
-
-func walk_left(force):
-	if _current_action == "neutral" or not _is_on_floor:
-		move()
-		if abs(_velocity.x) < _walk_max_speed:
-			force.x -= _WALK_FORCE
-			_is_stoping = false
+func apply_gravity():
+	var gravity = _state_manager._gravity
+	if _state_manager._is_on_floor:
+		if _state_manager._current_action != "jump":
+			_velocity.y = gravity
+	else:
+		if _state_manager._is_on_ceiling:
+			_velocity.y = gravity
 		else:
-			_velocity.x = _walk_max_speed * _facing_direction
-		
-		if _current_action == "neutral":
-			if _facing_direction == 1:
-				_facing_direction = -1
-				set_scale(Vector2(-0.8, 0.8))
-	return force
+			_velocity.y += gravity
 
+func apply_jump_force(): #REFACTOR controlled from anim player
+	_velocity.y = _state_manager._jump_force
 
-func walk_right(force):
-	if _current_action == "neutral" or not _is_on_floor:
-		move()
-		if abs(_velocity.x) < _walk_max_speed:
-			force.x += _WALK_FORCE
-			_is_stoping = false
-		else:
-			_velocity.x = _walk_max_speed * _facing_direction
-		
-		if _current_action == "neutral":
-			if _facing_direction == -1:
-				_facing_direction = 1
-				set_scale(Vector2(-0.8, -0.8))
-	return force
-
+func apply_walk_force():
+	var _facing_direction = _state_manager._facing_direction
+	var max_walk_speed = _state_manager._max_walk_speed
+	var new_v = abs(_velocity.x) + _state_manager._walk_speed
+	if new_v < max_walk_speed:
+		_velocity.x = new_v * _facing_direction
+	else:
+		_velocity.x = max_walk_speed * _facing_direction
 
 func stop_movement():
-	var vsign = sign(_velocity.x)
-	var vlen = abs(_velocity.x)
-	vlen -= _STOP_FORCE * _delta
-	if vlen < 0:
-		vlen = 0
-	_velocity.x = vlen * vsign
+	var cur_velocity = abs(_velocity.x)
+	if cur_velocity != 0:
+		cur_velocity -= _state_manager._stop_force
+		if cur_velocity < 0:
+			cur_velocity = 0
+		_velocity.x = cur_velocity * sign(_velocity.x)
 
 
-func handle_world_positions(): #Camera moves when player is on the screen edge
-	if position.x > 200:
-		var speed = 150 * _delta
-		_overseer.update_all_node_positions(speed)
-
-
-#===== Collision Management =====#
-
-func hit_enemy(body):
-	if body.has_method("set_knockback"):
-		body.set_knockback(1000, position)
-
-
-func _on_hurtbox_entered(area):
-	if area.has_method("get_type"):
-		match area.get_type():
-			"money":
-				add_money(area._value)
-				area.queue_free()
-			
-			"exit_portal":
-				_is_touching_exit_portal = true
-			
-			"damage":
-				if not _is_stunned:
-					receive_attack(area)
-			
-			"powerup":
-				area.player_touched_powerup(self)
-
-
-func on_hurtbox_exited(area):
-	if area.has_method("get_type"):
-		match area.get_type():
-			"exit_portal":
-				_is_touching_exit_portal = false
-
-
-
-
-
-#===== Logic/State Handling =====#
-
-func handle_player_logic():
-	var action_input = _input_handler.action_input
-	
-	_is_on_floor = is_on_floor()
-	_is_on_ceiling = is_on_ceiling()
-	_is_on_wall = is_on_wall()
-	
-	if _is_on_floor:
-		_number_of_jumps = 0
-	
-	if _current_action == "neutral" or _current_action == "jump":
-		match action_input:
-			"jump":
-				jump()
-			
-			"attack":
-				attack()
-			
-			"skill":
-				skill()
-
-
-
-func idle(): #also triggered when an animation finishes
-	_current_action = "neutral"
-	_is_stunned = false
-	_can_move = true
-	if _is_on_floor:
-		if _is_running:
-			_animator.play("run")
-		else:
-			_animator.play("idle")
-	else:
-		_animator.play("fall")
-
-
-func move():
-	if _current_action == "neutral":
-		_is_running = true
-		if _is_on_floor:
-			_animator.play("run")
-		else:
-			_animator.play("fall")
-
-
-func jump():
-	if _input_handler.input_jump == 1:
-		if _number_of_jumps < _max_jumps:
-			_current_action = "jump"
-			_animator.play("jump")
-			
-			_number_of_jumps += 1
-			_velocity.y = -_JUMP_SPEED
-
-
-func attack():
-	if _input_handler.input_attack == 1:
-		if _is_touching_exit_portal:
-			print("EXIT_GAME")
-		else:
-			_current_action = "attack"
-			if _is_on_floor:
-				_can_move = false
-				match _input_handler.final_input:
-					"attack":
-						_weapon.neutral_ground()
-					"up_attack":
-						_weapon.up_ground()
-					"down_attack":
-						_weapon.up_ground()
-					"left_attack":
-						_weapon.side_ground()
-					"right_attack":
-						_weapon.side_ground()
-			
-			else:
-				match _input_handler.final_input:
-					"attack":
-						_weapon.side_ground()
-					"up_attack":
-						_weapon.up_air()
-					"down_attack":
-						_weapon.down_air()
-					"left_attack":
-						_weapon.side_air()
-					"right_attack":
-						_weapon.side_air()
-
-
-func skill():
-	if _input_handler.input_skill == 1:
-		_current_action = "skill"
-		_animator.play("shortsword_up_air")
-
-
-func hurt():
-	_current_action = "hurt"
-	_is_stunned = true
-	
-	_animator.play("hurt")
-
-
+func apply_knockback(knockback):
+	_velocity.x += knockback.x
+	_velocity.y += knockback.y 
 
 
 func check_if_landed():
-	if _is_on_floor:
-		idle()
+	if _state_manager._is_on_floor:
+		set_state_idle()
 
 
-func check_if_dead():
-	if _current_hp <= 0:
-		queue_free()
 
 
+
+
+
+
+# ==== Action Management ==== #
+
+func handle_player_movement_action(): # REFACTOR into _state_manager
+	var movement_input = _input_handler._movement_input_direction
+	
+	if _state_manager._can_move:
+		if movement_input == 0:
+			movement_input = _state_manager._facing_direction
+			_state_manager._is_running = false
+			if _velocity.x == 0 and _state_manager._current_action == "neutral":
+				_state_manager.set_state_idle()
+		else:
+			_state_manager.set_state_move()
+			if movement_input != _state_manager._facing_direction: # handle change direction
+				var new_scale = get_scale()
+				new_scale.x *= -1
+				set_scale(new_scale)
+	
+		_state_manager._facing_direction = movement_input
+
+
+func handle_player_action():
+	if _input_handler._inventory_input == true:
+		_inventory.toggle_visibility()
+	
+	var action_input = _input_handler._action_input
+	var action_frames = _input_handler._action_frames
+	
+	
+	var _can_use_action = _state_manager.can_use_action(action_input, action_frames)
+	if _can_use_action:
+		if action_input == "jump":
+			_state_manager.handle_jump_action()
+		else:
+			_state_manager.handle_attack_action(action_input)
+
+
+
+
+
+#===== Collision Management ===== 
+
+func receive_attack(attack, attacker_pos):
+	print("received attack")
+	_state_manager.receive_attack(attack, attacker_pos)
+	update_hp(_state_manager._current_hp)
+	_state_manager.check_if_dead()
+
+
+func touched_item(item):
+	var _is_item_added = _inventory.add_item(item)
+	if _is_item_added:
+		item.queue_free()
+
+
+func touched_exit_portal():
+	_state_manager._is_touching_exit_portal = true
+
+func stopped_touching_exit_portal():
+	_state_manager._is_touching_exit_portal = false
+
+
+
+
+
+#==== State Interface ====#
+
+func set_state_idle():
+	_state_manager.set_state_idle()
+
+func set_state_hurt_recovery():
+	_state_manager.set_state_hurt_recovery()
 
 
 
 #===== Meta Handling =====#
 
-func add_money(value):
-	_current_money += value
-	_overseer._ui_manager.update_money_value(_current_money)
-
 
 func fill_hp():
-	_current_hp = _max_hp
-	update_hp()
+	_state_manager.fill_hp()
+	update_hp(_state_manager._current_hp)
 
-func update_hp():
-	_overseer._ui_manager.update_hp_value(_current_hp)
+func add_hp(amount):
+	_state_manager.add_hp(amount)
+	update_hp(_state_manager._current_hp)
+
+func increase_max_hp(value): # REFACTOR add scaling bar
+	_state_manager.increase_max_hp(value)
 
 
-func receive_attack(attack):
-	_current_hp -= attack._damage
-	update_hp()
-	check_if_dead()
-	
-	var is_enemy_on_right = position.x < attack.get_parent().global_position.x
-	if is_enemy_on_right:
-		_velocity.x = attack._knockback_force.x * -1
-		_velocity.y = attack._knockback_force.y
-	else:
-		_velocity.x = attack._knockback_force.x
-		_velocity.y = attack._knockback_force.y
-	
-	hurt()
+func lose_hp(amount):
+	_state_manager.lose_hp(amount)
+	update_hp(_state_manager._current_hp)
+	_state_manager.check_if_dead()
+
+
 
 
 func get_current_attack_values():
-	return _weapon._attack
+	return _weapon.return_attack()
 
 
-func increase_max_hp(value):
-	_max_hp += value
-	_current_hp += value
-	update_hp()
 
 
-func increase_movement_speed(value):
-	_walk_min_speed += value
-	_walk_max_speed += value 
+
+
+
+
+
+#===== UI Handling =====#
+
+func update_hp(updated_hp):
+	_overseer._ui_manager.update_hp_value(updated_hp)
+
+
+
+
+
+
+
+
+
 
 
 

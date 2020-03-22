@@ -1,7 +1,7 @@
 [gd_scene load_steps=78 format=2]
 
 [ext_resource path="res://Enemies/EnemyList/Skeleton/Skeleton.gd" type="Script" id=1]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Walk/sprite_00.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_08.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_00.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_02.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_03.png" type="Texture" id=5]
@@ -9,46 +9,46 @@
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_05.png" type="Texture" id=7]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_06.png" type="Texture" id=8]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_07.png" type="Texture" id=9]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_08.png" type="Texture" id=10]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_09.png" type="Texture" id=11]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_10.png" type="Texture" id=12]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_11.png" type="Texture" id=13]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_12.png" type="Texture" id=14]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_13.png" type="Texture" id=15]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_14.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_15.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_16.png" type="Texture" id=18]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_17.png" type="Texture" id=19]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_18.png" type="Texture" id=20]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_19.png" type="Texture" id=21]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_00.png" type="Texture" id=22]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_01.png" type="Texture" id=23]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_02.png" type="Texture" id=24]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_03.png" type="Texture" id=25]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_04.png" type="Texture" id=26]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_05.png" type="Texture" id=27]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_06.png" type="Texture" id=28]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_07.png" type="Texture" id=29]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_08.png" type="Texture" id=30]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_09.png" type="Texture" id=31]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_10.png" type="Texture" id=32]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_11.png" type="Texture" id=33]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_00.png" type="Texture" id=34]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_01.png" type="Texture" id=35]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_02.png" type="Texture" id=36]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_03.png" type="Texture" id=37]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_04.png" type="Texture" id=38]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_05.png" type="Texture" id=39]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_06.png" type="Texture" id=40]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_07.png" type="Texture" id=41]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_08.png" type="Texture" id=42]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_09.png" type="Texture" id=43]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_10.png" type="Texture" id=44]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_11.png" type="Texture" id=45]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_12.png" type="Texture" id=46]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_13.png" type="Texture" id=47]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_14.png" type="Texture" id=48]
-[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_15.png" type="Texture" id=49]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_09.png" type="Texture" id=10]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_10.png" type="Texture" id=11]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_11.png" type="Texture" id=12]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_12.png" type="Texture" id=13]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_13.png" type="Texture" id=14]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_14.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_15.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_16.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_17.png" type="Texture" id=18]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_18.png" type="Texture" id=19]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_19.png" type="Texture" id=20]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_00.png" type="Texture" id=21]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_01.png" type="Texture" id=22]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_02.png" type="Texture" id=23]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_03.png" type="Texture" id=24]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_04.png" type="Texture" id=25]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_05.png" type="Texture" id=26]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_06.png" type="Texture" id=27]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_07.png" type="Texture" id=28]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_08.png" type="Texture" id=29]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_09.png" type="Texture" id=30]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_10.png" type="Texture" id=31]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Death/sprite_11.png" type="Texture" id=32]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_00.png" type="Texture" id=33]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_01.png" type="Texture" id=34]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_02.png" type="Texture" id=35]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_03.png" type="Texture" id=36]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_04.png" type="Texture" id=37]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_05.png" type="Texture" id=38]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_06.png" type="Texture" id=39]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_07.png" type="Texture" id=40]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_08.png" type="Texture" id=41]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_09.png" type="Texture" id=42]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_10.png" type="Texture" id=43]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_11.png" type="Texture" id=44]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_12.png" type="Texture" id=45]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_13.png" type="Texture" id=46]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_14.png" type="Texture" id=47]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Hurt/sprite_15.png" type="Texture" id=48]
+[ext_resource path="res://Assets/Visual/Enemies/Skeleton/Walk/sprite_00.png" type="Texture" id=49]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Walk/sprite_01.png" type="Texture" id=50]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Walk/sprite_02.png" type="Texture" id=51]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Walk/sprite_03.png" type="Texture" id=52]
@@ -95,7 +95,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ), ExtResource( 19 ), ExtResource( 20 ), ExtResource( 21 ) ]
+"values": [ ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 2 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ), ExtResource( 19 ), ExtResource( 20 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("../Hitbox/HitboxShape:shape")
@@ -174,7 +174,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 1,
-"values": [ ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ), ExtResource( 30 ), ExtResource( 31 ), ExtResource( 32 ), ExtResource( 33 ) ]
+"values": [ ExtResource( 21 ), ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ), ExtResource( 30 ), ExtResource( 31 ), ExtResource( 32 ) ]
 }
 tracks/1/type = "method"
 tracks/1/path = NodePath("..")
@@ -240,7 +240,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.36, 0.4, 0.44, 0.48, 0.52, 0.56, 0.6 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 1,
-"values": [ ExtResource( 34 ), ExtResource( 35 ), ExtResource( 36 ), ExtResource( 37 ), ExtResource( 38 ), ExtResource( 39 ), ExtResource( 40 ), ExtResource( 41 ), ExtResource( 42 ), ExtResource( 43 ), ExtResource( 44 ), ExtResource( 45 ), ExtResource( 46 ), ExtResource( 47 ), ExtResource( 48 ), ExtResource( 49 ) ]
+"values": [ ExtResource( 33 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 36 ), ExtResource( 37 ), ExtResource( 38 ), ExtResource( 39 ), ExtResource( 40 ), ExtResource( 41 ), ExtResource( 42 ), ExtResource( 43 ), ExtResource( 44 ), ExtResource( 45 ), ExtResource( 46 ), ExtResource( 47 ), ExtResource( 48 ) ]
 }
 tracks/1/type = "method"
 tracks/1/path = NodePath("..")
@@ -283,7 +283,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1 ),
 "update": 1,
-"values": [ ExtResource( 2 ), ExtResource( 50 ), ExtResource( 51 ), ExtResource( 52 ), ExtResource( 53 ), ExtResource( 54 ), ExtResource( 55 ), ExtResource( 56 ), ExtResource( 57 ), ExtResource( 58 ), ExtResource( 59 ), ExtResource( 60 ), ExtResource( 61 ), ExtResource( 62 ), ExtResource( 63 ), ExtResource( 64 ), ExtResource( 65 ), ExtResource( 66 ), ExtResource( 67 ), ExtResource( 68 ) ]
+"values": [ ExtResource( 49 ), ExtResource( 50 ), ExtResource( 51 ), ExtResource( 52 ), ExtResource( 53 ), ExtResource( 54 ), ExtResource( 55 ), ExtResource( 56 ), ExtResource( 57 ), ExtResource( 58 ), ExtResource( 59 ), ExtResource( 60 ), ExtResource( 61 ), ExtResource( 62 ), ExtResource( 63 ), ExtResource( 64 ), ExtResource( 65 ), ExtResource( 66 ), ExtResource( 67 ), ExtResource( 68 ) ]
 }
 
 [sub_resource type="RectangleShape2D" id=8]
@@ -318,16 +318,14 @@ anims/hurt = SubResource( 6 )
 anims/walk = SubResource( 7 )
 
 [node name="Hitbox" type="Area2D" parent="."]
-visible = false
-monitoring = false
-collision_layer = 0
-collision_mask = 4
+monitorable = false
+collision_layer = 4
+collision_mask = 0
 script = ExtResource( 69 )
 
 [node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
 position = Vector2( 13.1043, 4.06685 )
 shape = SubResource( 3 )
-disabled = true
 
 [node name="Hurtbox" type="Area2D" parent="."]
 visible = false
@@ -339,4 +337,5 @@ collision_mask = 0
 position = Vector2( 0.177204, 2.90978 )
 shape = SubResource( 8 )
 
+[connection signal="area_entered" from="Hitbox" to="Hitbox" method="on_hitbox_entered"]
 [connection signal="area_entered" from="Hurtbox" to="." method="received_hit"]

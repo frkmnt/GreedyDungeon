@@ -615,9 +615,9 @@ process_parent = true
 physics_process_parent = true
 
 [node name="Hitbox" type="Area2D" parent="."]
-monitoring = false
-collision_layer = 0
-collision_mask = 4
+monitorable = false
+collision_layer = 4
+collision_mask = 0
 script = ExtResource( 60 )
 _damage = 2
 

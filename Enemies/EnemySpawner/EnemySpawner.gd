@@ -19,7 +19,7 @@ func initialize():
 func get_random_enemy():
 	randomize()
 	var random_enemy_index = floor(rand_range(0, _enemy_prefabs.size()))
-	print("Spawning Enemy ", random_enemy_index+1, ".")
+	#print("Spawning Enemy ", random_enemy_index+1, ".")
 	return _enemy_prefabs[random_enemy_index]
 
 

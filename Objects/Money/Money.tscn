@@ -4,10 +4,11 @@
 [ext_resource path="res://Assets/Visual/Money/Coin.png" type="Texture" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 100, 130 )
+extents = Vector2( 9, 9 )
 
 [node name="Money" type="Area2D"]
-scale = Vector2( 0.03, 0.03 )
+scale = Vector2( 0.5, 0.5 )
+monitoring = false
 collision_layer = 0
 collision_mask = 64
 script = ExtResource( 1 )

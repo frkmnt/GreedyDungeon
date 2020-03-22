@@ -1,14 +1,19 @@
 extends KinematicBody2D
 
-# Components
+#==== References ====#
+var _player
+var _enemy_manager
+
+
+#==== Components ====#
 var _animation_tree 
 var _sprite
 var _visibility_enabler
 var _turn_around_cast
+var _attack
 
-var _player
 
-# Physics
+#==== Physics ====#
 const _GRAVITY = 500
 const _MAX_WALK_FORCE = 20
 const _WALK_FORCE = 40
@@ -19,8 +24,11 @@ var _velocity = Vector2()
 var _facing_direction = -1 #left
 var _is_stoping = false
 
+var _despawn_pos_x
+var _despawn_pos_y
 
-# Meta
+
+#==== State ====#
 var _current_action = "move"
 
 var _current_hp = 2
@@ -35,15 +43,19 @@ func _ready():
 	set_process(false)
 	set_physics_process(false)
 	
-	_turn_around_cast = $TurnAroundCast
-
+	_player = get_tree().current_scene.get_node("Player")
+	_enemy_manager = get_parent().get_parent()
 	
 	_sprite = $Sprite
+	_turn_around_cast = $TurnAroundCast
 	_animation_tree = $Sprite/AnimationPlayer
 	_visibility_enabler = $VisibilityEnabler2D
-	_player = get_tree().current_scene.get_node("Player")
+	_attack = $Hitbox
+	_attack.initialize()
 	
 	_facing_direction = -1
+	_despawn_pos_x = _enemy_manager._despawn_pos_x
+	_despawn_pos_y = _enemy_manager._despawn_pos_y
 	set_scale(Vector2(0.7, 0.7))
 	set_state_neutral()
 
@@ -106,7 +118,7 @@ func check_if_dead():
 
 
 func die():
-	_player.add_money(10)
+	#REFACTOR spawn item
 	queue_free()
 
 
@@ -154,10 +166,13 @@ func stop_movement():
 
 
 func check_if_needs_to_be_despawned():
-	if position.x <= -100 or position.y <= -100:
+	if position.x <= _despawn_pos_x or position.y >= _despawn_pos_y:
 		print("Enemy moved off limits, despawning...")
 		queue_free()
 
+
+func update_despawn_position(new_pos):
+	_despawn_pos_x = new_pos
 
 
 
@@ -193,9 +208,5 @@ func is_player_in_attack_range():
 		_ready_to_attack = true
 	else:
 		_ready_to_attack = false
-
-
-
-
 
 

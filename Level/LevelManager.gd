@@ -1,21 +1,37 @@
 extends Node2D
 
+#==== References ====#
+var _camera 
+var _enemy_manager
 
-#Variables
+
+# ==== Components ==== #
 var _map_generator
 var _room_container
 
+var _limit_left
+var _limit_right
+
+
+# ==== Variables ==== #
+
 var _instantiated_rooms = [] # nº0 is the newest
-var _is_currently_boss_battle = false
 
 var _total_rooms_instanced = 0
+var _room_spawn_position = 800 # pos player has to reach to spawn room
+
+var _boss_max_camera_distance = 0
+var _is_currently_boss_battle = false
 
 
-
-# Boostrap
+# ==== Boostrap ==== #
 
 func initialize():
+	_camera = get_parent()._ui_manager._camera
+	_enemy_manager = get_parent()._enemy_manager
 	_room_container = $RoomContainer
+	_limit_left = $PlayerLimitLeft
+	_limit_right = $ PlayerLimitRight
 	initialize_map_generator()
 	spawn_starter_rooms()
 
@@ -31,13 +47,13 @@ func spawn_starter_rooms():
 	
 	var room_instance = _map_generator.spawn_first_room()
 	_instantiated_rooms.append(room_instance)
-	
+
 	room_instance = _map_generator.spawn_starter_room()
 	_instantiated_rooms.append(room_instance)
 	_map_generator.place_room(room_instance, 400)
 	_map_generator.spawn_random_enemy_in_room(room_instance)
 	room_container.add_child(room_instance)
-	
+
 	room_instance = _map_generator.spawn_starter_room()
 	_instantiated_rooms.append(room_instance)
 	_map_generator.place_room(room_instance, 800)
@@ -48,25 +64,45 @@ func spawn_starter_rooms():
 
 
 
-# Logic
+# ==== Logic ==== #
 
-func update_room_positions(speed):
-	for room in _instantiated_rooms:
-		room.position = Vector2(room.position.x+speed, 0)
-	if does_room_need_to_be_spawned():
-		add_room()
-
-
-func does_room_need_to_be_spawned():
-	var b = false
-	if get_oldest_room_position() < -500 \
-	and not _map_generator._is_busy:
-		b = true
-	return b
+func handle_player_position(p_pos):
+	handle_camera_position(p_pos)
+	handle_level_spawn(p_pos)
+	
 
 
-func add_room():
-	_map_generator._semaphore.post()
+
+# ==== Camera Component Interface ==== #
+
+func handle_camera_position(p_pos):
+	var distance_player_to_camera = p_pos - _camera.position.x
+	var move_offset = distance_player_to_camera - 200
+	if move_offset > 0:
+		if _is_currently_boss_battle:
+			var new_cam_pos = _camera.position.x + move_offset
+			if new_cam_pos <= _boss_max_camera_distance:
+				_camera.position.x = new_cam_pos
+				_limit_left.position.x += move_offset
+				_limit_right.position.x += move_offset
+			else:
+				_camera.position.x = _boss_max_camera_distance
+		else:
+			_camera.position.x += move_offset
+			_limit_left.position.x += move_offset
+			_limit_right.position.x += move_offset
+
+
+
+
+
+# ==== Map Generator Component Interface ==== #
+
+func handle_level_spawn(p_pos):
+	if p_pos >= _room_spawn_position:
+		#_enemy_manager.update_despawn_position(_room_spawn_position - 500)
+		_room_spawn_position = _room_spawn_position + 400
+		_map_generator._semaphore.post()
 
 
 func remove_oldest_room():
@@ -74,34 +110,20 @@ func remove_oldest_room():
 	floor_to_remove.queue_free()
 
 
-func get_oldest_room_position():
-	return _instantiated_rooms[0].position.x
-
-
-func get_oldest_room_offset():
-	return _instantiated_rooms[0].position.x +500
+func on_boss_room_spawn():
+	_boss_max_camera_distance = _room_spawn_position
 
 
 
-# Level Movement
 
 
-func can_move_world():
-	if is_current_room_boss_room():
-		if _instantiated_rooms[1].position.x <= -4:
-			if _is_currently_boss_battle:
-				return false
-	return true
 
 
-func is_current_room_boss_room():
-	return _instantiated_rooms[1]._has_boss
 
 
-func get_boss_room_extra_offset(): #for when rooms get a 1 pixel offset
-	var offset = 0
-	if _instantiated_rooms[1].position.x < 4:
-		offset = 4 - _instantiated_rooms[1].position.x 
-	return offset
+
+
+
+
 
 
