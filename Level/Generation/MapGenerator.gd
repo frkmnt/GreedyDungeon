@@ -43,9 +43,9 @@ var _thread
 func initialize(level_manager): 
 	_level_manager = level_manager
 	_enemy_manager = level_manager.get_parent().get_node("EnemyManager")
-	_money_generator = preload("res://Level/Generation/MoneyGenerator.gd").new()
-	_money_generator.initialize()
+	_money_generator = _level_manager._money_generator
 	_room_container = get_parent().get_child(1)
+	
 	load_object_prefabs()
 	inititalize_floors()
 	initialize_boss_floors()

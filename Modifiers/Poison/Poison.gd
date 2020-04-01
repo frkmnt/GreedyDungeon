@@ -5,12 +5,14 @@ const _id = 1
 const _modifier_ids = [1] #tick
 const _name = "Poison"
 
+#==== References ====#
+var _target 
 
 #==== Components ====#
 var _timer
 
 #==== Variables ====#
-var _target 
+var _needs_to_be_removed = false
 
 var _total_ticks = 0
 var _tick_time = 0
@@ -20,7 +22,7 @@ var _damage = 0
 
 #==== Bootstrap ====#
 
-func initialize_damage(total_ticks, damage, tick_time):
+func initialize_values(total_ticks, damage, tick_time):
 	_total_ticks = total_ticks
 	_damage = damage
 	_tick_time = tick_time
@@ -51,7 +53,6 @@ func on_stack(new_poison):
 #==== On Tick ====#
 
 func on_tick():
-	print("tick")
 	_timer.stop()
 	_target.lose_hp(_damage)
 	
@@ -69,6 +70,7 @@ func end_modifier():
 	_target.visible = true
 	_target._hurtbox.set_collision_mask_bit(2, true)
 	_timer.queue_free()
+	_needs_to_be_removed = true
 	_target._state_manager.remove_modifier(self)
 
 

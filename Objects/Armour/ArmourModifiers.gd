@@ -10,10 +10,10 @@ var _modifiers_list = []
 
 func initialize():
 	_modifiers_list[0] # longer i-frames
-	
-	
-	
 	_modifiers_list[1] # shield after cooldown
+	
+	
+	
 	_modifiers_list[2] # health regen
 	_modifiers_list[3] # thorns
 	_modifiers_list[4] # standing still increases defense

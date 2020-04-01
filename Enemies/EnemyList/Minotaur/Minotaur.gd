@@ -277,9 +277,8 @@ func check_if_dead():
 	return false
 
 
-func die():
+func die(): #REFACTOR spawn loot
 	_player.fill_hp()
-	_player.add_money(500)
 	_level_manager._is_currently_boss_battle = false
 	queue_free()
 

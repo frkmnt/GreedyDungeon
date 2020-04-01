@@ -6,6 +6,7 @@ var _level_manager
 var _player
 var _enemy_manager
 var _ui_manager
+var _modifier_manager
 
 
 # Bootstrap
@@ -14,6 +15,7 @@ func _init():
 	initialize_enemy_manager()
 	initialize_ui_manager()
 	initialize_level_manager()
+	initialize_modifier_manager()
 	inititalize_player()
 
 
@@ -29,6 +31,11 @@ func initialize_level_manager():
 	add_child(_level_manager)
 	_level_manager.initialize()
 
+
+func initialize_modifier_manager():
+	_modifier_manager = preload("res://Modifiers/ModifierManager.tscn").instance()
+	add_child(_modifier_manager)
+	_modifier_manager.initialize()
 
 func inititalize_player():
 	_player = preload("res://Player/Player.tscn").instance()

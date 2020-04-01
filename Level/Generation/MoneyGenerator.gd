@@ -28,21 +28,11 @@ const _MONEY_ODDS = [ [200], [198, 200], [196, 200], [194, 200], [192, 200], #fl
                       [170, 191, 197, 199, 200], [168, 191, 197, 199, 200], [166, 190, 197, 199, 200], [164, 189, 196, 199, 200], [162, 188, 195, 198, 200], #floors 15-20
                       [160, 186, 194, 197, 199, 200], [158, 186, 194, 197, 199, 200], [156, 184, 193, 197, 199, 200], [154, 183, 192, 197, 199, 200], [152, 183, 192, 197, 199, 200], #floors 20-25
                       [150, 182, 192, 197, 199, 200], [148, 182, 192, 197, 199, 200], [146, 181, 191, 197, 199, 200], [144, 180, 190, 196, 199, 200], [138, 178, 188, 194, 198, 200] #floors 25-30
-                   ] 
+                    ] 
 
 var _money_modifier = 0
 var _chest_modifier = 0
 
-
-# Powerups
-
-
-const _DOUBLE_JUMP_PREFAB = preload("res://Objects/Powerup/Double Jump/DoubleJump.tscn")
-const _EXTRA_HEALTH_PREFAB = preload("res://Objects/Powerup/ExtraHealth/ExtraHealth.tscn")
-const _EXTRA_SPEED_PREFAB = preload("res://Objects/Powerup/ExtraSpeed/ExtraSpeed.tscn")
-
-
-var _powerup_list = []
 
 
 
@@ -50,11 +40,7 @@ var _powerup_list = []
 # Bootstrap
 
 func initialize():
-	_powerup_list.append(_DOUBLE_JUMP_PREFAB)
-	_powerup_list.append(_EXTRA_HEALTH_PREFAB)
-	_powerup_list.append(_EXTRA_SPEED_PREFAB)
-
-
+	pass
 
 
 
@@ -147,11 +133,6 @@ func spawn_potion():
 
 
 
-
-
-func get_random_powerup():
-	var random_powerup_index = floor(rand_range(0, _powerup_list.size()))
-	return _powerup_list[random_powerup_index]
 
 
 

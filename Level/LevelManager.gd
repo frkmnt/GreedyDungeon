@@ -7,6 +7,7 @@ var _enemy_manager
 
 # ==== Components ==== #
 var _map_generator
+var _money_generator
 var _room_container
 
 var _limit_left
@@ -37,6 +38,8 @@ func initialize():
 
 
 func initialize_map_generator():
+	_money_generator = preload("res://Level/Generation/MoneyGenerator.gd").new()
+	_money_generator.initialize()
 	_map_generator = $MapGenerator
 	_map_generator.initialize(self)
 
@@ -78,7 +81,8 @@ func handle_player_position(p_pos):
 func handle_camera_position(p_pos):
 	var distance_player_to_camera = p_pos - _camera.position.x
 	var move_offset = distance_player_to_camera - 200
-	if move_offset > 0:
+	if move_offset > 0: #REFACTOR possibly causes camera stutter
+		move_offset = int(move_offset)
 		if _is_currently_boss_battle:
 			var new_cam_pos = _camera.position.x + move_offset
 			if new_cam_pos <= _boss_max_camera_distance:
@@ -91,6 +95,7 @@ func handle_camera_position(p_pos):
 			_camera.position.x += move_offset
 			_limit_left.position.x += move_offset
 			_limit_right.position.x += move_offset
+		_camera.align()
 
 
 

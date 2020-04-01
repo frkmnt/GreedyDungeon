@@ -145,12 +145,9 @@ func handle_physics():
 
 
 func change_direction():
-	if _facing_direction == 1:
-		_facing_direction = -1
-		set_scale(Vector2(-0.8, 0.8))
-	else:
-		_facing_direction = 1
-		set_scale(Vector2(-0.8, -0.8))
+	var new_scale = get_scale()
+	new_scale.x *= -1
+	set_scale(new_scale)
 
 
 func stop_movement():

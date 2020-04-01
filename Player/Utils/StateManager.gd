@@ -5,7 +5,7 @@ extends Node
 var _player
 var _animator
 var _weapon
-
+var _modifier_container
 
 #==== Components ====#
 var _i_frames_modifier
@@ -33,7 +33,7 @@ var _max_walk_speed = 5000
 var _stop_force = 300
 
 var _gravity = 500
-var _jump_force = -10000
+var _jump_force = -12500
 
 
 
@@ -56,7 +56,7 @@ var _defense = 0
 
 #==== Modifiers ====#
 # dictionary of identifier : modifiers[]
-# identifiers: passive, tick, delayed, condition
+# identifiers: passive, tick, delayed, receive_hit, condition,
 var _modifier_type_list = []
 
 
@@ -70,9 +70,16 @@ func initialize(parent_class):
 	_player = parent_class
 	_animator = _player._animator
 	_weapon = _player._weapon
+	_modifier_container = _player._modifier_container
 	initialize_modifier_map()
 	initialize_i_frames()
 
+
+func test_modifiers():
+	var shield = load("res://Modifiers/Shield/Shield.tscn").instance()
+	add_modifier(shield)
+	var regenerating_shield = load("res://Modifiers/Shield/RegeneratingShield.tscn").instance()
+	add_modifier(regenerating_shield)
 
 func initialize_modifier_map():
 	for i in range(5):
@@ -80,7 +87,7 @@ func initialize_modifier_map():
 
 
 func initialize_i_frames():
-	_i_frames_modifier = load("res://Modifiers/OnHitIframes.gd")
+	_i_frames_modifier = load("res://Modifiers/OnHitIframes/OnHitIframes.tscn")
 
 
 
@@ -122,7 +129,7 @@ func set_state_hurt():
 	_animator.play("hurt")
 
 func set_state_hurt_recovery():
-	var i_frames = _i_frames_modifier.new()
+	var i_frames = _i_frames_modifier.instance()
 	add_modifier(i_frames)
 	set_state_idle()
 
@@ -149,8 +156,9 @@ func can_use_action(action_input, action_frames):
 func handle_jump_action():
 	if _number_of_jumps < _max_jumps:
 		_current_action = "jump"
-		_animator.play("jump")
 		_number_of_jumps += 1
+		_player.apply_jump_force()
+		_animator.play("jump")
 
 
 func handle_attack_action(action_input):
@@ -212,7 +220,9 @@ func lose_hp(amount):
 
 
 func receive_attack(attack, attacker_pos):
-	#REFACTOR check if player can receive attack
+	
+	attack = handle_receive_attack_modifiers(attack)
+	
 	_current_hp -= attack._damage
 	
 	var new_knockback = Vector2(0, attack._knockback_force.y)
@@ -245,8 +255,7 @@ func increase_movement_speed(value):
 #==== Modifiers ====#
 
 func add_modifier(modifier):
-	print("adding")
-	modifier.initialize(_player)
+	#REFACTOR check if modifier can be added
 	
 	var modifier_map
 	var cur_modifier
@@ -254,25 +263,64 @@ func add_modifier(modifier):
 		modifier_map = _modifier_type_list[modifier_type_id]
 		cur_modifier = modifier_map.get(modifier._id)
 		if cur_modifier == null:
-			print("new modifier")
+			print("new modifier: ", modifier._name)
 			modifier_map[modifier._id] = modifier
+			modifier.initialize(_player) 
+			_modifier_container.add_child(modifier)
 		else:
-			print("existing modifier")
+			print("existing modifier: ", cur_modifier._name)
 			cur_modifier.on_stack(modifier)
+
+
 
 
 func remove_modifier(modifier):
 	var modifier_map
 	var cur_modifier
 	for modifier_type_id in modifier._modifier_ids:
-		print("removing")
+		print("removing modifier: ", modifier_type_id)
 		modifier_map = _modifier_type_list[modifier_type_id]
 		modifier_map.erase(modifier._id)
 
+func remove_modifiers(modifier_list):
+	for modifier in modifier_list:
+		remove_modifier(modifier)
+
+
+
+func handle_receive_attack_modifiers(attack):
+	var modifier_index = 0
+	var modifiers_to_remove = []
+	var modifier_map = _modifier_type_list[3]
+	var sorted_modifiers = modifier_map.values()
+	sorted_modifiers.sort_custom(self, "sort_modifier_array_by_priority")
+	for modifier in sorted_modifiers:
+		attack = modifier.on_receive_attack(attack)
+		if modifier._needs_to_be_removed == true:
+			modifiers_to_remove.append(modifier)
+	remove_modifiers(modifiers_to_remove)
+	return attack
 
 
 
 
+func sort_modifier_array_by_priority(item_1, item_2):
+	if item_1._priority < item_2._priority:
+		return true
+	return false
+
+
+func has_modifier(modifier_struct):
+	var modifier_map
+	var cur_modifier
+	for modifier_type_id in modifier_struct[1]: 
+		modifier_map = _modifier_type_list[modifier_type_id]
+		cur_modifier = modifier_map.get(modifier_struct[0])
+		if cur_modifier != null:
+			if not cur_modifier._needs_to_be_removed:
+				return true
+	
+	return false
 
 
 

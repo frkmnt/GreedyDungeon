@@ -6,13 +6,14 @@ var _level_manager
 
 
 #==== Components ====#
-var _input_handler
-var _animator
+var _effect_container
 var _weapon
 var _modifier_container
+var _animator
 var _hitbox
 var _hurtbox
 
+var _input_handler
 var _inventory
 var _state_manager
 
@@ -30,16 +31,28 @@ var _delta = 0
 
 func initialize():
 	_overseer = get_parent()
-	initialize_input_handler()
+	
+	initialize_effect_container()
 	initialize_animations()
 	initialize_weapons()
 	initialize_hitboxes()
+	
+	initialize_input_handler()
 	initialize_inventory()
 	initialize_map_manager()
-	initialize_state_manager()
 	
+	initialize_state_manager()
 	_state_manager.set_state_idle()
 
+
+func _ready():
+	_state_manager.test_modifiers() #REFACTOR test func don't forget to remove
+
+
+
+
+func initialize_effect_container():
+	_effect_container = $EffectContainer
 
 func initialize_input_handler():
 	var loaded_input_handler = load("res://Player/Utils/InputManager.gd") # REFACTOR USED TO BE PRELOAD, COULDA FUCKA THINGS UP
@@ -64,9 +77,9 @@ func initialize_map_manager():
 	_level_manager = _overseer._level_manager
 
 func initialize_state_manager():
+	_modifier_container = $ModifierContainer
 	_state_manager = load("res://Player/Utils/StateManager.gd").new()
 	_state_manager.initialize(self)
-	_modifier_container = $ModifierContainer
 
 
 
@@ -79,18 +92,13 @@ func _process(delta):
 	_state_manager.handle_player_state()
 	handle_player_action()
 	handle_player_movement_action()
-	
-	
-	print(_state_manager._modifier_type_list[1])
+	_level_manager.handle_player_position(position.x)
 
 
 func _physics_process(delta):
 	_delta = delta
 	handle_player_physics()
-	_level_manager.handle_player_position(position.x)
 
-
-#REFACTOR disable collision in animator and add blink
 
 
 #===== Physics Handling =====#
@@ -122,7 +130,7 @@ func apply_gravity():
 		else:
 			_velocity.y += gravity
 
-func apply_jump_force(): #REFACTOR controlled from anim player
+func apply_jump_force():
 	_velocity.y = _state_manager._jump_force
 
 func apply_walk_force():

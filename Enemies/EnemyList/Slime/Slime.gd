@@ -148,12 +148,10 @@ func handle_physics():
 
 
 func change_direction():
-	if _facing_direction == 1:
-		_facing_direction = -1
-		set_scale(Vector2(-0.7, -0.7))
-	else:
-		_facing_direction = 1
-		set_scale(Vector2(-0.7, 0.7))
+	_facing_direction *= -1
+	var new_scale = get_scale()
+	new_scale.x *= -1
+	set_scale(new_scale)
 
 
 func stop_movement():
@@ -180,7 +178,11 @@ func update_despawn_position(new_pos):
 
 func received_hit(body):
 	_animation_tree.stop()
-	_current_hp -= 1
+	
+	# dmg
+	var attack = body.get_parent().get_current_attack_values()
+	_current_hp -= attack._damage
+	
 	if check_if_dead():
 		set_state_death()
 	else:
