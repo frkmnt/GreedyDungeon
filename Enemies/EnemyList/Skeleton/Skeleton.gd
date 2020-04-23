@@ -75,7 +75,7 @@ func handle_state_logic():
 		if _ready_to_attack:
 			set_state_attack()
 		
-		elif is_on_wall():
+		elif is_on_wall() and is_on_floor():
 			change_direction()
 
 

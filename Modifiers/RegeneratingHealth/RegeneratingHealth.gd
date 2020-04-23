@@ -2,8 +2,8 @@ extends Node2D
 
 
 #==== Constants ====#
-const _id = 4
-const _modifier_ids = [3] # tick
+const _id = 5
+const _modifier_ids = [1] # tick
 const _name = "Regenerating Shield"
 const _description = "Creates a shield every 10 seconds" #refactor change qty
 const _priority = 1

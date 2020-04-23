@@ -6,6 +6,7 @@ extends Node2D
 # luck                   2
 # shield                 3
 # regenerating shield    4
+# regenerating health    5
 
 #==== Modifier Types ====#
 # passive                0

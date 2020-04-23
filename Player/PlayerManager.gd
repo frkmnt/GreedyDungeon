@@ -50,7 +50,6 @@ func _ready():
 
 
 
-
 func initialize_effect_container():
 	_effect_container = $EffectContainer
 
@@ -242,8 +241,9 @@ func set_state_hurt_recovery():
 
 
 
-#===== Meta Handling =====#
 
+
+#===== Meta Handling =====#
 
 func fill_hp():
 	_state_manager.fill_hp()
