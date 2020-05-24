@@ -31,8 +31,9 @@ var _p_position = 0
 
 # Meta
 var _current_action = "walk"
-var _current_stage = 1 # stage 1 has attack3,, 2 has attack2, and 3 attack1 
-var _max_spins = 3
+var _current_stage = 1 # stage 1 has attack3, 2 has attack2, and 3 attack1 
+var _current_attack = 0
+var _max_spins = 10
 var _current_spins = 0
 var _current_idles = 0
 var _can_move = false
@@ -42,7 +43,7 @@ var _recovery_quantity = 3
 var _current_recovery = 0
 
 var _current_hp = 30
-var _is_immune = false # boss is immune until its attack
+var _is_immune = false # boss is immune when changing stages
 
 
 
@@ -109,10 +110,14 @@ func _process(delta):
 func handle_state_logic():
 	if _current_action == "walk":
 		apply_current_stage_attack()
-
+	elif _current_stage == 3:
+		if _current_attack == 2 and _current_spins > 3 and is_player_on_top():
+			print(_current_spins)
+			set_state_attack1()
 
 func set_state_neutral():
 	_current_action = "walk"
+	_current_attack = 0
 	
 	_max_walk_force = _previous_max_walk_force
 	_walk_force = _previous_walk_force
@@ -128,6 +133,7 @@ func set_state_neutral():
 
 func set_state_idle():
 	_current_action = "idle"
+	_current_attack = 0
 	
 	_max_walk_force = _previous_max_walk_force
 	_walk_force = _previous_walk_force
@@ -158,60 +164,29 @@ func apply_current_stage_attack():
 		_can_turn = false
 		_current_recovery = 0
 		
-		randomize()
-		
 		if _current_stage == 1: # Stage 1
-			_is_stoping = true
-			_minotaur_attack._damage = 1
-			_minotaur_attack._knockback_force = Vector2(400, -300)
-			_recovery_quantity = 4
-			_animation_tree.play("attack1") 
+			set_state_attack1()
 		
 		elif _current_stage == 2: # Stage 2
 			var random_attack_index = floor(rand_range(0, 100))
 			if random_attack_index <= 50:
-				_is_stoping = true
-				_minotaur_attack._damage = 1
-				_minotaur_attack._knockback_force = Vector2(400, -300)
-				_recovery_quantity = 4
-				_animation_tree.play("attack1")
+				set_state_attack1()
 			else:
-				_is_stoping = true
-				_minotaur_attack._damage = 1
-				_minotaur_attack._knockback_force = Vector2(300, 0)
-				_recovery_quantity = 3
-				_animation_tree.play("attack3")
+				set_state_attack3()
 			
 		else: # Stage 3
 			if _random_attack_index <= 30:
-				_is_stoping = true
-				_minotaur_attack._damage = 2
-				_minotaur_attack._knockback_force = Vector2(300, 0)
-				_recovery_quantity = 1
-				_animation_tree.play("attack3")
+				set_state_attack3()
+				
 			elif _random_attack_index <= 70:
-				_minotaur_attack._damage = 1
-				_minotaur_attack._knockback_force = Vector2(600, -200)
-				_previous_max_walk_force = _max_walk_force 
-				_max_walk_force = 150
-				_previous_walk_force = _walk_force 
-				_walk_force = 125
-				_previous_stop_force = _stop_force
-				_stop_force = 130
-
-				_max_spins = 10
-				_recovery_quantity = 6
-				_animation_tree.play("attack2")
+				set_state_attack2()
 			else:
-				_is_stoping = true
-				_minotaur_attack._damage = 1
-				_minotaur_attack._knockback_force = Vector2(500, -400)
-				_recovery_quantity = 3
-				_animation_tree.play("attack1")
-			_random_attack_index = randi() % 100 + 1 # returns random integer between 1 and 100
+				set_state_attack1()
+			_random_attack_index = randi() % 100 + 1 # in the end, because stage 3 always starts with attack 2
 
 
 func spin_to_win():
+	_current_attack = 2
 	_current_spins += 1
 	if _current_spins >= _max_spins:
 		_current_spins = 0
@@ -227,6 +202,7 @@ func finish_ultimate_setup():
 
 
 func set_state_recover():
+	_current_attack = 0
 	_current_action = "recover"
 	
 	_max_walk_force = _previous_max_walk_force
@@ -244,11 +220,45 @@ func set_state_recover():
 		_animation_tree.play("recover")
 
 
+func set_state_attack1():
+	_is_stoping = true
+	_minotaur_attack.set_attack1_values()
+	_recovery_quantity = 4
+	_animation_tree.play("attack1") 
+	_current_attack = 1
+
+
+func set_state_attack2():
+	_minotaur_attack.set_attack2_values()
+	
+	_max_spins = 10
+	_current_spins = 0
+	_recovery_quantity = 6
+	_current_attack = 2
+	
+	_previous_max_walk_force = _max_walk_force 
+	_max_walk_force = 150
+	_previous_walk_force = _walk_force 
+	_walk_force = 125
+	_previous_stop_force = _stop_force
+	_stop_force = 130
+	
+	_animation_tree.play("attack2")
+
+
+func set_state_attack3():
+	_is_stoping = true
+	_minotaur_attack.set_attack3_values()
+	_recovery_quantity = 3
+	_animation_tree.play("attack3")
+	_current_attack = 0 # only set up in spin to win
+
 
 
 
 
 func set_state_hurt():
+	_current_attack = 0
 	_current_action = "hurt"
 	
 	_max_walk_force = _previous_max_walk_force
@@ -262,6 +272,7 @@ func set_state_hurt():
 
 
 func set_state_death():
+	_current_attack = 0
 	_current_action = "death"
 	_is_stoping = true
 	_is_immune = true
@@ -369,5 +380,16 @@ func is_player_in_attack_range():
 	if abs(position.x - _p_position.x) < 35 \
 	and _p_position.y > 110:
 		return true
+
+func is_player_on_top():
+	if abs(position.x - _p_position.x) < 7 \
+		and _p_position.y > 110 and _p_position.y < 118:
+			return true
+
+
+
+
+
+
 
 

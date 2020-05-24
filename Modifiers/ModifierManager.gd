@@ -13,7 +13,8 @@ extends Node2D
 # tick                   1
 # delayed                2
 # received_hit           3
-# condition              4
+# received_effect        4
+# condition              5
 
 
 
@@ -55,6 +56,28 @@ func initialize_modifier_prefabs():
 	_modifier_list.append([])
 	_modifier_list[4].append( load("res://Modifiers/Shield/RegeneratingShield.tscn") )
 	_modifier_list[4].append([3])
+	
+	# regenerating health: 5
+	_modifier_list.append([])
+	_modifier_list[5].append( load("res://Modifiers/Health/RegeneratingHealth.tscn") )
+	_modifier_list[5].append([1, 3])
+	
+	# bigger jump: 6
+	_modifier_list.append([])
+	_modifier_list[6].append( load("res://Modifiers/Jump/BiggerJump.tscn") )
+	_modifier_list[6].append([0])
+	
+	# extra jump: 7
+	_modifier_list.append([])
+	_modifier_list[7].append( load("res://Modifiers/Jump/ExtraJump.tscn") )
+	_modifier_list[7].append([0])
+	
+	# extra health: 8
+	_modifier_list.append([])
+	_modifier_list[8].append( load("res://Modifiers/Health/ExtraHealth.tscn") )
+	_modifier_list[8].append([0])
+
+
 
 
 #==== Modifier Handling ====#

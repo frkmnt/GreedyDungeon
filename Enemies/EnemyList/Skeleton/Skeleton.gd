@@ -73,6 +73,7 @@ func handle_state_logic():
 	if not _is_knockback and not _current_action == "attack":
 		is_player_in_attack_range() 
 		if _ready_to_attack:
+			print("received_hit")
 			set_state_attack()
 		
 		elif is_on_wall() and is_on_floor():
@@ -172,6 +173,7 @@ func update_despawn_position(new_pos):
 #==== Collision Handling ====#
 
 func received_hit(body):
+	print("received_hit")
 	_animation_tree.stop()
 	
 	# dmg

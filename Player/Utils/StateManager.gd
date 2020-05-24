@@ -73,13 +73,18 @@ func initialize(parent_class):
 	_modifier_container = _player._modifier_container
 	initialize_modifier_map()
 	initialize_i_frames()
+	initialize_meta_variables()
 
 
 func test_modifiers():
-	var shield = load("res://Modifiers/Shield/Shield.tscn").instance()
-	add_modifier(shield)
-	var regenerating_shield = load("res://Modifiers/Shield/RegeneratingShield.tscn").instance()
-	add_modifier(regenerating_shield)
+	var modifier_manager = _player._overseer._modifier_manager
+	
+	var regenerating_health = modifier_manager.get_modifier_instance(4)
+	regenerating_health.initialize_values(5)
+	add_modifier(regenerating_health)
+
+
+
 
 func initialize_modifier_map():
 	for i in range(5):
@@ -88,6 +93,12 @@ func initialize_modifier_map():
 
 func initialize_i_frames():
 	_i_frames_modifier = load("res://Modifiers/OnHitIframes/OnHitIframes.tscn")
+
+
+func initialize_meta_variables():
+	_current_hp = _max_hp
+
+
 
 
 
@@ -212,7 +223,11 @@ func add_hp(amount):
 
 func increase_max_hp(value):
 	_max_hp += value
-	_current_hp += value
+
+func decrease_max_hp(value):
+	_max_hp -= value
+	if _current_hp > _max_hp:
+		_current_hp = _max_hp
 
 func lose_hp(amount):
 	_current_hp -= amount
@@ -254,22 +269,33 @@ func increase_movement_speed(value):
 
 #==== Modifiers ====#
 
-func add_modifier(modifier):
-	#REFACTOR check if modifier can be added
+func add_modifier(new_modifier):
+	print("adding modifier ", new_modifier)
+	var aux_modifier
+	var can_add_modifier = true
 	
-	var modifier_map
-	var cur_modifier
-	for modifier_type_id in modifier._modifier_ids:
-		modifier_map = _modifier_type_list[modifier_type_id]
-		cur_modifier = modifier_map.get(modifier._id)
-		if cur_modifier == null:
-			print("new modifier: ", modifier._name)
-			modifier_map[modifier._id] = modifier
-			modifier.initialize(_player) 
-			_modifier_container.add_child(modifier)
-		else:
-			print("existing modifier: ", cur_modifier._name)
-			cur_modifier.on_stack(modifier)
+	
+	# check if can add modifier
+	for aux_modifier in _modifier_type_list[4]: # 4: receive_modifier
+		can_add_modifier = aux_modifier.receive_modifier()
+	if not can_add_modifier:
+		return
+	
+	
+	aux_modifier = get_modifier(new_modifier._id)
+	if not aux_modifier == null: # existing modifier
+		print("existing modifier")
+		aux_modifier.on_stack(new_modifier)
+	
+	else: # new modifier
+		print("new modifier")
+		var modifier_map
+		for modifier_type_id in new_modifier._modifier_ids:
+			modifier_map = _modifier_type_list[modifier_type_id]
+			modifier_map[new_modifier._id] = new_modifier
+		_modifier_container.add_child(new_modifier)
+		new_modifier.initialize(_player) 
+
 
 
 
@@ -310,17 +336,16 @@ func sort_modifier_array_by_priority(item_1, item_2):
 	return false
 
 
-func has_modifier(modifier_struct):
-	var modifier_map
-	var cur_modifier
-	for modifier_type_id in modifier_struct[1]: 
-		modifier_map = _modifier_type_list[modifier_type_id]
-		cur_modifier = modifier_map.get(modifier_struct[0])
-		if cur_modifier != null:
-			if not cur_modifier._needs_to_be_removed:
-				return true
+
+# returns a modifier corresponding to the id, or null if none exists
+func get_modifier(modifier_id):
+	var modifier
 	
-	return false
+	for modifier in _modifier_container.get_children():
+		if modifier_id == modifier._id \
+		and not modifier._needs_to_be_removed:
+			return modifier
+	return null
 
 
 

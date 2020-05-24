@@ -33,7 +33,7 @@ func initialize(target):
 	
 	_timer = Timer.new()
 	_timer.connect("timeout", self, "on_tick")
-	_target._modifier_container.add_child(_timer)
+	self.add_child(_timer)
 	_timer.start(_tick_time)
 
 

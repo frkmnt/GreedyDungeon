@@ -47,7 +47,7 @@ func initialize():
 
 func _ready():
 	_state_manager.test_modifiers() #REFACTOR test func don't forget to remove
-
+	_state_manager.initialize_meta_variables()
 
 
 func initialize_effect_container():
@@ -121,7 +121,7 @@ func get_movement_force():
 func apply_gravity():
 	var gravity = _state_manager._gravity
 	if _state_manager._is_on_floor:
-		if _state_manager._current_action != "jump":
+		if _state_manager._current_action != "jump" and _state_manager._current_action != "hurt":
 			_velocity.y = gravity
 	else:
 		if _state_manager._is_on_ceiling:
@@ -151,9 +151,10 @@ func stop_movement():
 
 
 func apply_knockback(knockback):
+	print("FAZ", _velocity)
 	_velocity.x += knockback.x
 	_velocity.y += knockback.y 
-
+	print("UM", _velocity)
 
 func check_if_landed():
 	if _state_manager._is_on_floor:
@@ -253,8 +254,13 @@ func add_hp(amount):
 	_state_manager.add_hp(amount)
 	update_hp(_state_manager._current_hp)
 
+
 func increase_max_hp(value): # REFACTOR add scaling bar
 	_state_manager.increase_max_hp(value)
+
+func decrease_max_hp(value): # REFACTOR add scaling bar
+	_state_manager.decrease_max_hp(value)
+
 
 
 func lose_hp(amount):
