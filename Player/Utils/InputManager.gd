@@ -80,7 +80,23 @@ func assign_action_input():
 		_stopped_action = true
 
 
+func assign_movement_touch(input): # called from the TouchInputManager
+	if input == "left":
+		_movement_input = "left"
+		_movement_input_direction = -1
+	elif input == "right":
+		_movement_input = "right"
+		_movement_input_direction = 1
+	else:
+		_movement_input = "neutral"
+		_movement_input_direction = 0
 
-
-
-
+func assign_action_touch(input): # called from the TouchInputManager
+	var previous_action_input = _action_input
+	_action_input = input
+	if previous_action_input == _action_input:
+		_action_frames += 1
+		_stopped_action = false
+	else:
+		_action_frames = 0
+		_stopped_action = true

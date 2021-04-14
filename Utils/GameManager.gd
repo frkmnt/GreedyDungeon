@@ -42,6 +42,7 @@ func inititalize_player():
 	_player.position = Vector2(_player.position.x+100, _player.position.y+150)
 	add_child(_player)
 	_player.initialize()
+	_ui_manager.initialize_input_ui_player(_player)
 
 
 

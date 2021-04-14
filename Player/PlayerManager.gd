@@ -46,7 +46,7 @@ func initialize():
 
 
 func _ready():
-	_state_manager.test_modifiers() #REFACTOR test func don't forget to remove
+	_state_manager.test_modifiers() #TODO REFACTOR test func don't forget to remove
 	_state_manager.initialize_meta_variables()
 
 
@@ -54,7 +54,7 @@ func initialize_effect_container():
 	_effect_container = $EffectContainer
 
 func initialize_input_handler():
-	var loaded_input_handler = load("res://Player/Utils/InputManager.gd") # REFACTOR USED TO BE PRELOAD, COULDA FUCKA THINGS UP
+	var loaded_input_handler = load("res://Player/Utils/InputManager.gd") #TODO REFACTOR USED TO BE PRELOAD, COULDA FUCKA THINGS UP
 	_input_handler = loaded_input_handler.new()
 
 func initialize_animations():
@@ -87,7 +87,7 @@ func initialize_state_manager():
 #===== Tick =====#
 
 func _process(delta):
-	_input_handler.process_all_inputs()
+#	_input_handler.process_all_inputs()
 	_state_manager.handle_player_state()
 	handle_player_action()
 	handle_player_movement_action()
@@ -195,12 +195,12 @@ func handle_player_action():
 	var action_input = _input_handler._action_input
 	var action_frames = _input_handler._action_frames
 	
-	
 	var _can_use_action = _state_manager.can_use_action(action_input, action_frames)
 	if _can_use_action:
 		if action_input == "jump":
 			_state_manager.handle_jump_action()
 		else:
+			print(action_input)
 			_state_manager.handle_attack_action(action_input)
 
 
@@ -255,10 +255,10 @@ func add_hp(amount):
 	update_hp(_state_manager._current_hp)
 
 
-func increase_max_hp(value): # REFACTOR add scaling bar
+func increase_max_hp(value): #TODO REFACTOR add scaling bar
 	_state_manager.increase_max_hp(value)
 
-func decrease_max_hp(value): # REFACTOR add scaling bar
+func decrease_max_hp(value): #TODO REFACTOR add scaling bar
 	_state_manager.decrease_max_hp(value)
 
 

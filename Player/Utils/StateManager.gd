@@ -147,7 +147,7 @@ func set_state_hurt_recovery():
 
 func check_if_dead():
 	if _current_hp <= 0:
-		#queue_free() # REFACTOR crashes the game
+		#queue_free() #TODO REFACTOR crashes the game 
 		print("dead")
 
 
@@ -177,6 +177,7 @@ func handle_attack_action(action_input):
 		print("EXIT_GAME")
 		
 	else:
+		print(action_input)
 		_current_action = "attack"
 		if _is_on_floor:
 			_can_move = false
@@ -271,12 +272,12 @@ func increase_movement_speed(value):
 
 func add_modifier(new_modifier):
 	print("adding modifier ", new_modifier)
-	var aux_modifier
 	var can_add_modifier = true
 	
-	
 	# check if can add modifier
-	for aux_modifier in _modifier_type_list[4]: # 4: receive_modifier
+	var aux_modifier
+	for modifier in _modifier_type_list[4]: # 4: receive_modifier
+		aux_modifier = modifier
 		can_add_modifier = aux_modifier.receive_modifier()
 	if not can_add_modifier:
 		return
@@ -339,8 +340,6 @@ func sort_modifier_array_by_priority(item_1, item_2):
 
 # returns a modifier corresponding to the id, or null if none exists
 func get_modifier(modifier_id):
-	var modifier
-	
 	for modifier in _modifier_container.get_children():
 		if modifier_id == modifier._id \
 		and not modifier._needs_to_be_removed:

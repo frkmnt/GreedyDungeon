@@ -11,12 +11,13 @@ var _animation_tree
 var _sprite
 var _hitbox_shape
 var _visibility_enabler
+var _turn_around_cast
 
 
 #==== Physics ====#
 const _GRAVITY = 700
-const _max_walk_force = 30
-const _walk_force = 20
+const _MAX_WALK_FORCE = 30
+const _WALK_FORCE = 20
 const _STOP_FORCE = 5
 
 var _delta
@@ -50,6 +51,7 @@ func _ready():
 	_sprite = $Sprite
 	_animation_tree = $Sprite/AnimationPlayer
 	_visibility_enabler = $VisibilityEnabler2D
+	_turn_around_cast = $TurnAroundCast
 	
 	_hitbox_shape = $Hitbox.get_child(0)
 	_hitbox_shape.disabled = true
@@ -70,14 +72,18 @@ func _process(delta):
 
 
 func handle_state_logic():
-	if not _is_knockback and not _current_action == "attack":
+	if not _is_knockback:
 		is_player_in_attack_range() 
-		if _ready_to_attack:
-			print("received_hit")
-			set_state_attack()
-		
-		elif is_on_wall() and is_on_floor():
-			change_direction()
+		if not _current_action == "attack":
+			if _ready_to_attack:
+				set_state_attack()
+			
+			elif _turn_around_cast.is_colliding():
+				if is_on_floor() or is_on_wall():
+					change_direction()
+
+
+
 
 
 func set_state_neutral():
@@ -130,22 +136,24 @@ func _physics_process(delta):
 
 
 func handle_physics():
-	if _is_stoping:
-		stop_movement()
 	var force = Vector2(0, _GRAVITY)
 	
-	if _current_action == "neutral":
-		force.x = _walk_force * _facing_direction
-		_velocity += force * _delta
-		if abs(_velocity.x) > _max_walk_force:
-			_velocity.x = _max_walk_force * _facing_direction
-	else:
-		_velocity += force * _delta
+	if _is_stoping:
+		stop_movement()
 	
+	if not _is_knockback and not _ready_to_attack:
+		if _current_action != "attack":
+			force.x = _WALK_FORCE * _facing_direction
+			_velocity += force * _delta
+			if abs(_velocity.x) > _MAX_WALK_FORCE:
+				_velocity.x = _MAX_WALK_FORCE * _facing_direction
+	
+	_velocity += force * _delta
 	_velocity = move_and_slide(_velocity, Vector2(0, -1))
 
 
 func change_direction():
+	_facing_direction *= -1
 	var new_scale = get_scale()
 	new_scale.x *= -1
 	set_scale(new_scale)
@@ -173,7 +181,6 @@ func update_despawn_position(new_pos):
 #==== Collision Handling ====#
 
 func received_hit(body):
-	print("received_hit")
 	_animation_tree.stop()
 	
 	# dmg
@@ -185,7 +192,11 @@ func received_hit(body):
 	else:
 		set_state_hurt()
 	
-	# knockback
+	apply_knockback(body)
+
+
+func apply_knockback(body):
+	var attack = body.get_parent().get_current_attack_values()
 	var is_enemy_on_right = position.x < body.get_parent().position.x
 	if is_enemy_on_right:
 		_velocity.x = attack._knockback.x * -1

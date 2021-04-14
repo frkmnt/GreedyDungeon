@@ -47,9 +47,10 @@ func _ready():
 	_enemy_manager = get_parent().get_parent()
 	
 	_sprite = $Sprite
-	_turn_around_cast = $TurnAroundCast
 	_animation_tree = $Sprite/AnimationPlayer
 	_visibility_enabler = $VisibilityEnabler2D
+	_turn_around_cast = $TurnAroundCast
+	
 	_attack = $Hitbox
 	_attack.initialize()
 	
@@ -165,7 +166,6 @@ func stop_movement():
 
 func check_if_needs_to_be_despawned():
 	if position.x <= _despawn_pos_x or position.y >= _despawn_pos_y:
-		print("Enemy moved off limits, despawning...")
 		queue_free()
 
 
