@@ -1,4 +1,4 @@
-[gd_scene load_steps=78 format=2]
+[gd_scene load_steps=80 format=2]
 
 [ext_resource path="res://Enemies/EnemyList/Skeleton/Skeleton.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_08.png" type="Texture" id=2]
@@ -68,20 +68,16 @@
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Walk/sprite_17.png" type="Texture" id=66]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Walk/sprite_18.png" type="Texture" id=67]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Walk/sprite_19.png" type="Texture" id=68]
-[ext_resource path="res://Enemies/EnemyList/Skeleton/SkeletonAttack.gd" type="Script" id=69]
+[ext_resource path="res://Enemies/Utils/Physics/StandardPhysics.gd" type="Script" id=69]
+[ext_resource path="res://Enemies/Utils/State/StandardState.gd" type="Script" id=70]
+[ext_resource path="res://Objects/Utils/PickableObject.tscn" type="PackedScene" id=71]
+[ext_resource path="res://Enemies/Utils/Hitbox/StandardHitbox.gd" type="Script" id=72]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 5.37783
 height = 13.0733
 
-[sub_resource type="CapsuleShape2D" id=2]
-radius = 6.28749
-height = 9.94252
-
-[sub_resource type="CapsuleShape2D" id=3]
-height = 14.8796
-
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=2]
 resource_name = "attack"
 length = 0.95
 step = 0.05
@@ -97,61 +93,13 @@ tracks/0/keys = {
 "update": 1,
 "values": [ ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 2 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ), ExtResource( 19 ), ExtResource( 20 ) ]
 }
-tracks/1/type = "value"
-tracks/1/path = NodePath("../Hitbox/HitboxShape:shape")
+tracks/1/type = "method"
+tracks/1/path = NodePath("../StandardState")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.05, 0.3 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ SubResource( 2 ), SubResource( 3 ) ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("../Hitbox/HitboxShape:rotation_degrees")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0.05, 0.3 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ -48.0, 0.0 ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("../Hitbox/HitboxShape:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
-"times": PoolRealArray( 0.05, 0.15, 0.3 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
-"update": 1,
-"values": [ Vector2( -10.619, -10.8449 ), Vector2( -15.5896, -11.5227 ), Vector2( 13.1043, 4.06685 ) ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("../Hitbox/HitboxShape:disabled")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0.3, 0.4 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ false, true ]
-}
-tracks/5/type = "method"
-tracks/5/path = NodePath("..")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/keys = {
 "times": PoolRealArray( 0.9 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
@@ -159,8 +107,20 @@ tracks/5/keys = {
 "method": "set_state_neutral"
 } ]
 }
+tracks/2/type = "value"
+tracks/2/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.3, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=8]
 resource_name = "death"
 length = 0.8
 step = 0.05
@@ -176,34 +136,37 @@ tracks/0/keys = {
 "update": 1,
 "values": [ ExtResource( 21 ), ExtResource( 22 ), ExtResource( 23 ), ExtResource( 24 ), ExtResource( 25 ), ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 29 ), ExtResource( 30 ), ExtResource( 31 ), ExtResource( 32 ) ]
 }
-tracks/1/type = "method"
-tracks/1/path = NodePath("..")
+tracks/1/type = "value"
+tracks/1/path = NodePath("..:collision_mask")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.8 ),
+"times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"values": [ {
-"args": [  ],
-"method": "die"
-} ]
+"update": 1,
+"values": [ 1 ]
 }
-tracks/2/type = "value"
-tracks/2/path = NodePath("../Hurtbox/HurtboxShape:disabled")
+tracks/2/type = "method"
+tracks/2/path = NodePath("../StandardState")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ true ]
+"times": PoolRealArray( 0, 0.8 ),
+"transitions": PoolRealArray( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "spawn_pickable_object"
+}, {
+"args": [  ],
+"method": "die"
+} ]
 }
 tracks/3/type = "value"
-tracks/3/path = NodePath("..:collision_mask")
+tracks/3/path = NodePath("../StandardHitbox/HurtBox/HurtBoxShape:disabled")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/imported = false
@@ -212,10 +175,10 @@ tracks/3/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ 1 ]
+"values": [ true ]
 }
 tracks/4/type = "value"
-tracks/4/path = NodePath("../Hitbox/HitboxShape:disabled")
+tracks/4/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/imported = false
@@ -227,7 +190,7 @@ tracks/4/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=4]
 length = 0.6
 step = 0.04
 tracks/0/type = "value"
@@ -243,7 +206,7 @@ tracks/0/keys = {
 "values": [ ExtResource( 33 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 36 ), ExtResource( 37 ), ExtResource( 38 ), ExtResource( 39 ), ExtResource( 40 ), ExtResource( 41 ), ExtResource( 42 ), ExtResource( 43 ), ExtResource( 44 ), ExtResource( 45 ), ExtResource( 46 ), ExtResource( 47 ), ExtResource( 48 ) ]
 }
 tracks/1/type = "method"
-tracks/1/path = NodePath("..")
+tracks/1/path = NodePath("../StandardState")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
@@ -257,7 +220,7 @@ tracks/1/keys = {
 } ]
 }
 tracks/2/type = "value"
-tracks/2/path = NodePath("../Hitbox/HitboxShape:disabled")
+tracks/2/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
@@ -269,7 +232,8 @@ tracks/2/keys = {
 "values": [ true ]
 }
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=5]
+resource_name = "move"
 length = 1.9
 loop = true
 step = 0.05
@@ -286,12 +250,15 @@ tracks/0/keys = {
 "values": [ ExtResource( 49 ), ExtResource( 50 ), ExtResource( 51 ), ExtResource( 52 ), ExtResource( 53 ), ExtResource( 54 ), ExtResource( 55 ), ExtResource( 56 ), ExtResource( 57 ), ExtResource( 58 ), ExtResource( 59 ), ExtResource( 60 ), ExtResource( 61 ), ExtResource( 62 ), ExtResource( 63 ), ExtResource( 64 ), ExtResource( 65 ), ExtResource( 66 ), ExtResource( 67 ), ExtResource( 68 ) ]
 }
 
-[sub_resource type="RectangleShape2D" id=8]
-extents = Vector2( 11.0545, 13.147 )
+[sub_resource type="CapsuleShape2D" id=6]
+height = 15.0
+
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 9, 13 )
 
 [node name="Skeleton" type="KinematicBody2D"]
 z_index = 1
-collision_layer = 0
+collision_layer = 2147483648
 collision_mask = 3
 script = ExtResource( 1 )
 
@@ -312,34 +279,43 @@ texture = ExtResource( 49 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite"]
 playback_process_mode = 0
-anims/attack = SubResource( 4 )
-anims/death = SubResource( 5 )
-anims/hurt = SubResource( 6 )
-anims/walk = SubResource( 7 )
+anims/attack = SubResource( 2 )
+anims/death = SubResource( 8 )
+anims/hurt = SubResource( 4 )
+anims/move = SubResource( 5 )
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="StandardState" type="Node" parent="."]
+script = ExtResource( 70 )
+
+[node name="StandardPhysics" type="Node2D" parent="."]
+script = ExtResource( 69 )
+_GRAVITY = 600
+_MAX_WALK_FORCE = 35
+_WALK_FORCE = 15
+_DISTANCE_TO_ATTACK_PLAYER = Vector2( 25, 23 )
+
+[node name="StandardHitbox" type="Node2D" parent="."]
+script = ExtResource( 72 )
+
+[node name="HitBox" type="Area2D" parent="StandardHitbox"]
 monitorable = false
 collision_layer = 4
 collision_mask = 0
-script = ExtResource( 69 )
 
-[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
-position = Vector2( 13.1043, 4.06685 )
-shape = SubResource( 3 )
+[node name="HitBoxShape" type="CollisionShape2D" parent="StandardHitbox/HitBox"]
+position = Vector2( 13.104, 4.067 )
+shape = SubResource( 6 )
+disabled = true
 
-[node name="Hurtbox" type="Area2D" parent="."]
-visible = false
+[node name="HurtBox" type="Area2D" parent="StandardHitbox"]
 monitorable = false
 collision_layer = 16
 collision_mask = 0
 
-[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2( 0.177204, 2.90978 )
-shape = SubResource( 8 )
+[node name="HurtBoxShape" type="CollisionShape2D" parent="StandardHitbox/HurtBox"]
+position = Vector2( 0.177, 2.91 )
+shape = SubResource( 7 )
 
-[node name="TurnAroundCast" type="RayCast2D" parent="."]
-position = Vector2( 10, -8 )
-enabled = true
-cast_to = Vector2( 5, 0 )
-[connection signal="area_entered" from="Hitbox" to="Hitbox" method="on_hitbox_entered"]
-[connection signal="area_entered" from="Hurtbox" to="." method="received_hit"]
+[node name="PickableObject" parent="." instance=ExtResource( 71 )]
+[connection signal="area_entered" from="StandardHitbox/HitBox" to="StandardHitbox" method="on_hitbox_entered"]
+[connection signal="area_entered" from="StandardHitbox/HurtBox" to="StandardHitbox" method="on_hurtbox_entered"]

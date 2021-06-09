@@ -799,10 +799,11 @@ script = ExtResource( 2 )
 [node name="ModifierContainer" type="Node2D" parent="."]
 
 [node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 3 )
+texture = ExtResource( 33 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite"]
 playback_process_mode = 0
+method_call_mode = 1
 anims/fall = SubResource( 2 )
 anims/hurt = SubResource( 3 )
 anims/idle = SubResource( 4 )
@@ -816,7 +817,6 @@ anims/shortsword_up_air = SubResource( 18 )
 anims/shortsword_up_ground = SubResource( 21 )
 
 [node name="Hitbox" type="Area2D" parent="."]
-editor/display_folded = true
 monitoring = false
 collision_layer = 0
 collision_mask = 48
@@ -827,12 +827,10 @@ shape = SubResource( 7 )
 disabled = true
 
 [node name="Hurtbox" type="Area2D" parent="."]
-editor/display_folded = true
 collision_layer = 64
 collision_mask = 68
 
 [node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
 position = Vector2( -0.26514, 2.5263 )
 shape = SubResource( 22 )
-
 [connection signal="area_entered" from="Hurtbox" to="." method="touched_item"]

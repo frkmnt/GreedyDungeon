@@ -1,4 +1,5 @@
 extends Control
+# Has a priority of -1, in order to override the input manager (priority 0)
 
 #==== References ====#
 var _parent_menu
@@ -10,11 +11,14 @@ var _joystick
 #==== Variables ====#
 var _is_movement_input_down = false
 var _is_action_input_down = false
+var _did_action_before_releasing = false # true if attacked before releasing input
+var _opened_menu = false # TODO fix
+var _touch_idx_dict = {} # holds the id of each simultaneous input, ie dictionary{[id: 0||1]} left or right
 
 const _direction_array = ["right", "down", "left", "up"] # matches radian quadrants, in order
 const _max_joystick_position = 612 - 90 # screen width - joystick radius
-const _min_speed_for_movement = 50 # min vector speed on action swipe
-const _min_speed_for_action = 50 # min vector speed on action swipe
+const _min_speed_for_movement = 50 # min vector speed on movement swipe
+const _min_speed_for_action = 1 # min vector speed on action swipe
 
 
 
@@ -26,19 +30,23 @@ func initialize(parent_menu):
 	_joystick.initialize()
 	_joystick.move_joystick_to_location(Vector2(250, 250))
 
-func initialize_player(player):
+func initialize_with_player(player):
 	_player = player
 
 
 #==== UI Interaction ====#
 
-func _input(event): # InputEventGesture, get event.index for different fingers
-	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT: # input
+func _input(event): # InputEventGesture
+	if _parent_menu.is_inventory_open():
+		_opened_menu = true
+		return
+	
+	if event is InputEventScreenTouch: # input
 		if event.position.x <= _max_joystick_position: # movement input
 			handle_movement_input(event) 
 		else: # action input
-			handle_action_input(event)
-	elif event is InputEventMouseMotion: # motion
+			handle_action_input(event) # TODO handle touch inputs, maybe charge up and handle on release??
+	elif event is InputEventScreenDrag: # motion
 		if event.position.x <= _max_joystick_position: # movement motion
 			handle_movement_motion(event)
 		else: # action motion
@@ -46,40 +54,61 @@ func _input(event): # InputEventGesture, get event.index for different fingers
 
 
 func handle_movement_input(event): # left side of screen
+	var touch_idx = event.get_index()
+	var touch_side = _touch_idx_dict.get(touch_idx)
+	if not touch_side: # new touch
+		_touch_idx_dict[touch_idx] = 1
+	elif touch_side != 1:
+		return
+	
 	if event.pressed: # if clicked 
 		if not _is_movement_input_down and not _joystick.is_within_bounds(event.position):
 			_joystick.move_joystick_to_location(event.position)
 		_is_movement_input_down = true
 	else: # if released
+		_touch_idx_dict.erase(touch_idx)
 		_is_movement_input_down = false
 		_joystick.reset_handle_pos()
 		_player._input_handler.assign_movement_touch("idle")
 
 func handle_movement_motion(event):
-	if _is_movement_input_down:
+	if _is_movement_input_down and event.position:
 		var swipe_vector = event.get_speed()
 		_joystick.set_gesture_on_joystick(swipe_vector)
 		if swipe_vector.length() >=_min_speed_for_movement:
 			var direction = angle_to_direction(swipe_vector.angle())
 			if not direction == "up" or not direction == "down":
 				_player._input_handler.assign_movement_touch(direction)
-		else:
-			_player._input_handler.assign_movement_touch("idle")
+	else:
+		_player._input_handler.assign_movement_touch("idle")
 
 
 func handle_action_input(event): # right side of screen
+	if _opened_menu:
+		_opened_menu = false
+		return
+	
+	var touch_idx = event.get_index()
+	var touch_side = _touch_idx_dict.get(touch_idx)
+	if not touch_side: # new touch
+		_touch_idx_dict[touch_idx] = 1
+	elif touch_side != 1:
+		return
+	
+	if not event.pressed:
+		_touch_idx_dict.erase(touch_idx)
+		if not _did_action_before_releasing: 
+			_player._input_handler.assign_action_touch("jump")
+		else:
+			_did_action_before_releasing = false
 	_is_action_input_down = event.pressed
-	if event.is_doubleclick():
-		var action = "attack_neutral"
-		_player._input_handler.assign_action_touch("idle")
 
 func handle_action_motion(event):
-	if _is_action_input_down:
+	if _is_action_input_down and not _did_action_before_releasing:
 		var swipe_vector = event.get_speed()
 		if swipe_vector.length() >= _min_speed_for_action:
+			_did_action_before_releasing = true
 			var direction = angle_to_direction(swipe_vector.angle())
-			if direction == "left" or direction == "right":
-				direction = "side"
 			_player._input_handler.assign_action_touch(direction)
 		else:
 			_player._input_handler.assign_action_touch("idle")

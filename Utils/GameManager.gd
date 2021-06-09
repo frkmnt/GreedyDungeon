@@ -1,7 +1,6 @@
 extends Node2D
 
-# Variables
-
+#==== References ====#
 var _level_manager 
 var _player
 var _enemy_manager
@@ -9,7 +8,7 @@ var _ui_manager
 var _modifier_manager
 
 
-# Bootstrap
+#==== Bootstrap ====#
 
 func _init():
 	initialize_enemy_manager()
@@ -19,18 +18,17 @@ func _init():
 	inititalize_player()
 
 
-
 func initialize_enemy_manager():
 	_enemy_manager = preload("res://Enemies/EnemyManager.tscn").instance()
 	add_child(_enemy_manager)
 	_enemy_manager.initialize()
 
-
 func initialize_level_manager():
 	_level_manager = preload("res://Level/LevelManager.tscn").instance()
 	add_child(_level_manager)
 	_level_manager.initialize()
-
+	_enemy_manager.initialize_with_loot_manager(_level_manager._money_generator)
+	_level_manager.spawn_starter_rooms()
 
 func initialize_modifier_manager():
 	_modifier_manager = preload("res://Modifiers/ModifierManager.tscn").instance()
@@ -43,10 +41,6 @@ func inititalize_player():
 	add_child(_player)
 	_player.initialize()
 	_ui_manager.initialize_input_ui_player(_player)
-
-
-
-
 
 func initialize_ui_manager():
 	_ui_manager = preload("res://UI/UIManager.tscn").instance()

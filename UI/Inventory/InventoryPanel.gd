@@ -1,7 +1,9 @@
 extends Node
 
-#==== Components ====#
+#==== References ====#
+var _parent_menu
 
+#==== Components ====#
 var _player
 var _inventory
 
@@ -20,7 +22,8 @@ var _currently_selected_slot
 
 #==== Bootstrap ====#
 
-func initialize():
+func initialize(parent_menu):
+	_parent_menu = parent_menu
 	_items_panel = $ItemsPanel
 	_equipment_panel = $EquipmentPanel
 	_info_label = $InfoPanel/InfoLabel
@@ -35,7 +38,7 @@ func initialize():
 
 
 func _ready():
-	var player_group_objects = get_tree().get_nodes_in_group("Player")
+	var player_group_objects = get_tree().get_nodes_in_group("Player") # TODO refactor
 	_player = player_group_objects[0]
 	_inventory = _player._inventory
 
@@ -77,7 +80,7 @@ func decrement_item_amount_in_slot(quantity, slot_index):
 func on_slot_pressed(slot_id): 
 	var slot_item = _inventory._item_list[slot_id][0]
 	if not slot_item == null:
-		_info_label.text = slot_item._description
+		_info_label.text = slot_item._object_data._description
 		_currently_selected_slot = slot_id
 		if slot_item.has_method("use_item"):
 			_use_button.visible = true
@@ -106,7 +109,8 @@ func toggle_visibility():
 		self.visible = true
 
 
-
+func on_disable_inventory_button_click():
+	_parent_menu.disable_inventory()
 
 
 

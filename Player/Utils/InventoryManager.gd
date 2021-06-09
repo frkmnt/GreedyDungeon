@@ -40,22 +40,24 @@ func initialize(inventory_panel):
 
 func add_item(item):
 	if not _is_inventory_full:
-		var item_positions = _stacking_map.get(item._id)
+		var item_data = item._object_data
+		var item_positions = _stacking_map.get(item_data._id)
+#		print("item id ", item_data._id)
+#		print("item name ", item_data._name)
 		if not item_positions == null: # item exists
 			for pos in item_positions:
-				if _item_list[pos][1] < item._stack_limit:
-					#print("adding to stack ", item._name, ", ", _item_list[pos][1])
+				if _item_list[pos][1] < item_data._stack_limit:
+					#print("adding to stack ", item_data._name, ", ", _item_list[pos][1])
 					_item_list[pos][1] += 1
 					_inventory_panel.update_item_amount_in_label(_item_list[pos][1], pos)
 					item.queue_free()
 					return true
 			var first_empty_pos = find_first_empty_slot() # stacks are full
 			if not first_empty_pos == -1:
-				#print("new stack of ", item._name)
-				var new_item_instance = item.add_to_inventory()
-				_item_list[first_empty_pos] = [new_item_instance, 1]
+				#print("new stack of ", item_data._name)
+				_item_list[first_empty_pos] = [item, 1]
 				item_positions.append(first_empty_pos)
-				_inventory_panel.add_item_to_slot(new_item_instance, first_empty_pos)
+				_inventory_panel.add_item_to_slot(item_data, first_empty_pos)
 				item.queue_free()
 				return true
 			else:
@@ -65,11 +67,12 @@ func add_item(item):
 		else:
 			var first_empty_pos = find_first_empty_slot()
 			if not first_empty_pos == -1:
-				#print("new stack of ", item._name)
-				var new_item_instance = item.add_to_inventory()
-				_item_list[first_empty_pos] = [new_item_instance, 1]
-				_stacking_map[item._id] = [first_empty_pos]
-				_inventory_panel.add_item_to_slot(new_item_instance, first_empty_pos)
+				#print("new stack of ", item_data._name)
+				var new_instance = item.get_new_instance()
+				item_data = new_instance._object_data
+				_item_list[first_empty_pos] = [new_instance, 1]
+				_stacking_map[item_data._id] = [first_empty_pos]
+				_inventory_panel.add_item_to_slot(item_data, first_empty_pos)
 				item.queue_free()
 				return true
 			else:
@@ -89,7 +92,7 @@ func find_first_empty_slot():
 
 func drop_stack(position):
 	_is_inventory_full = false
-	var item_id = _item_list[position][0]._id
+	var item_id = _item_list[position][0]._object_data._id
 	var stack_info = _stacking_map.get(item_id)
 	stack_info.remove(stack_info.find(position))
 	if stack_info.size() == 0:

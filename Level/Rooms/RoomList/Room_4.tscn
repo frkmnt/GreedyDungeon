@@ -8,7 +8,7 @@
 script = ExtResource( 1 )
 _PORTAL_POSITION = Vector2( 80, 160 )
 _ENEMY_POSITIONS = [ Vector2( 120, 48 ), Vector2( 208, 96 ), Vector2( 320, 160 ) ]
-_CHEST_POSITIONS = [ Vector2( 243, 108 ) ]
+_CHEST_POSITIONS = [ Vector2( 243, 106 ) ]
 
 [node name="MainTileMap" type="TileMap" parent="."]
 tile_set = ExtResource( 2 )

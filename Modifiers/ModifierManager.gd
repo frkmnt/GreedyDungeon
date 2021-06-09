@@ -7,6 +7,9 @@ extends Node2D
 # shield                 3
 # regenerating shield    4
 # regenerating health    5
+# bigger jump            6
+# extra jump             7
+# extra health           8
 
 #==== Modifier Types ====#
 # passive                0

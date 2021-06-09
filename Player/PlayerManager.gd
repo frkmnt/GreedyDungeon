@@ -46,7 +46,7 @@ func initialize():
 
 
 func _ready():
-	_state_manager.test_modifiers() #TODO REFACTOR test func don't forget to remove
+	#_state_manager.test_modifiers() #TODO REFACTOR test func don't forget to remove
 	_state_manager.initialize_meta_variables()
 
 
@@ -87,16 +87,16 @@ func initialize_state_manager():
 #===== Tick =====#
 
 func _process(delta):
-#	_input_handler.process_all_inputs()
+	_input_handler.process_all_inputs()
 	_state_manager.handle_player_state()
 	handle_player_action()
 	handle_player_movement_action()
-	_level_manager.handle_player_position(position.x)
 
 
 func _physics_process(delta):
 	_delta = delta
 	handle_player_physics()
+	_level_manager.handle_player_position(position.x)
 
 
 
@@ -133,13 +133,13 @@ func apply_jump_force():
 	_velocity.y = _state_manager._jump_force
 
 func apply_walk_force():
-	var _facing_direction = _state_manager._facing_direction
+	var facing_direction = _state_manager._facing_direction
 	var max_walk_speed = _state_manager._max_walk_speed
 	var new_v = abs(_velocity.x) + _state_manager._walk_speed
 	if new_v < max_walk_speed:
-		_velocity.x = new_v * _facing_direction
+		_velocity.x = new_v * facing_direction
 	else:
-		_velocity.x = max_walk_speed * _facing_direction
+		_velocity.x = max_walk_speed * facing_direction
 
 func stop_movement():
 	var cur_velocity = abs(_velocity.x)
@@ -151,16 +151,18 @@ func stop_movement():
 
 
 func apply_knockback(knockback):
-	print("FAZ", _velocity)
 	_velocity.x += knockback.x
 	_velocity.y += knockback.y 
-	print("UM", _velocity)
 
 func check_if_landed():
 	if _state_manager._is_on_floor:
 		set_state_idle()
 
 
+func change_direction(): # flips the player on the x axis
+	var new_scale = get_scale()
+	new_scale.x *= -1
+	set_scale(new_scale)
 
 
 
@@ -168,25 +170,6 @@ func check_if_landed():
 
 
 # ==== Action Management ==== #
-
-func handle_player_movement_action(): # REFACTOR into _state_manager
-	var movement_input = _input_handler._movement_input_direction
-	
-	if _state_manager._can_move:
-		if movement_input == 0:
-			movement_input = _state_manager._facing_direction
-			_state_manager._is_running = false
-			if _velocity.x == 0 and _state_manager._current_action == "neutral":
-				_state_manager.set_state_idle()
-		else:
-			_state_manager.set_state_move()
-			if movement_input != _state_manager._facing_direction: # handle change direction
-				var new_scale = get_scale()
-				new_scale.x *= -1
-				set_scale(new_scale)
-	
-		_state_manager._facing_direction = movement_input
-
 
 func handle_player_action():
 	if _input_handler._inventory_input == true:
@@ -200,8 +183,23 @@ func handle_player_action():
 		if action_input == "jump":
 			_state_manager.handle_jump_action()
 		else:
-			print(action_input)
 			_state_manager.handle_attack_action(action_input)
+
+
+func handle_player_movement_action(): # TODO refactor into _state_manager
+	if _state_manager._can_move:
+		var movement_input = _input_handler._movement_input_direction
+		if movement_input == 0:
+			movement_input = _state_manager._facing_direction
+			_state_manager._is_running = false
+			if _velocity.x == 0 and _state_manager._current_action == "neutral":
+				_state_manager.set_state_idle()
+		else:
+			_state_manager.set_state_move()
+			if movement_input != _state_manager._facing_direction: # handle change direction
+				change_direction()
+	
+		_state_manager._facing_direction = movement_input
 
 
 
@@ -210,13 +208,14 @@ func handle_player_action():
 #===== Collision Management ===== 
 
 func receive_attack(attack, attacker_pos):
-	print("received attack")
 	_state_manager.receive_attack(attack, attacker_pos)
 	update_hp(_state_manager._current_hp)
 	_state_manager.check_if_dead()
 
 
 func touched_item(item):
+	if item.get_parent() is PickableObject:
+		item = item.get_parent().get_item_from_container()
 	var _is_item_added = _inventory.add_item(item)
 	if _is_item_added:
 		item.queue_free()
@@ -285,7 +284,7 @@ func get_current_attack_values():
 #===== UI Handling =====#
 
 func update_hp(updated_hp):
-	_overseer._ui_manager.update_hp_value(updated_hp)
+	_overseer._ui_manager.update_cur_hp_value(updated_hp)
 
 
 

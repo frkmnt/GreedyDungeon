@@ -1,52 +1,32 @@
-extends Node2D
+extends Sprite
+
+#==== Components ====#
+var _object_data 
 
 
-var _type = "item"
-var _id = 10
-var _name = "Small Health Potion"
-var _description = "A small potion that recovers 2 HP." 
-onready var _sprite = $Sprite.texture
+#==== Bootstrap ====#
 
-var _value = 30
-var _stack_limit = 3
-
-
-
-
-# Bootstrap
-
-func initialize(id, name, description, sprite, value, stack_limit):
-	_id = id
-	_name = name
-	_description = description
-	_sprite = $Sprite.texture
-	_sprite = sprite
-	_value = value
-	_stack_limit = stack_limit
+func initialize(object_data):
+	var type = "item"
+	var id = 19
+	var name = "Small Health Potion"
+	var description = "A potion that instantly restores 2 HP." 
+	var value = 75
+	var stack_limit = 2
+	_object_data = object_data
+	_object_data.initialize(type, id, name, description, value, stack_limit, texture)
 
 
-
-# Logic
-func get_type():
-	return _type
-
-
+#==== Logic ====#
 
 func use_item(player):
 	player.add_hp(2)
 
 
-func add_to_inventory():
-	var new_potion = get_script().new()
-	new_potion._id = _id
-	new_potion._name = _name
-	new_potion._description = _description
-	new_potion._value = _value
-	new_potion._sprite = _sprite
-	return new_potion
-	
-
-
+func get_new_instance():
+	var new_instance = get_script().new()
+	new_instance._object_data = _object_data
+	return new_instance
 
 
 

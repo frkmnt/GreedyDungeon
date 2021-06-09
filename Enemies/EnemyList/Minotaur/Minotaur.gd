@@ -112,7 +112,6 @@ func handle_state_logic():
 		apply_current_stage_attack()
 	elif _current_stage == 3:
 		if _current_attack == 2 and _current_spins > 3 and is_player_on_top():
-			print(_current_spins)
 			set_state_attack1()
 
 func set_state_neutral():

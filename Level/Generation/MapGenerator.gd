@@ -224,7 +224,7 @@ func spawn_random_enemy_in_room(room_instance):
 		var coordinates = enemy_position
 		coordinates.x = room_instance.position.x + coordinates.x
 		 
-		var enemy_prefab = _enemy_manager._enemy_spawner.get_random_enemy().instance()
+		var enemy_prefab = _enemy_manager._enemy_spawner.get_random_enemy()
 		enemy_prefab.position = coordinates
 		_enemy_manager.add_enemy(enemy_prefab)
 
@@ -282,7 +282,7 @@ func choose_random_tile_of_type(type):
 		"BACKGROUND":
 			min_index = 15
 			max_index = 22
-	          
+			  
 	randomize()
 	var random_tile = floor(rand_range(min_index, max_index))
 	return random_tile

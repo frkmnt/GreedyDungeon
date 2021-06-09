@@ -10,12 +10,13 @@ const _invisible_time = 0.2
 
 
 #==== Components ====#
+var _despawn_timer
 var _timer
 
 #==== Variables ====#
 var _target 
-
 var _needs_to_be_removed = false
+var _despawn_duration # time until despawn
 
 var _total_ticks = 2
 
@@ -24,32 +25,53 @@ var _total_ticks = 2
 
 #==== Bootstrap ====#
 
-#REFACTOR add initialize_values
+func initialize_values(total_ticks):
+	_total_ticks = total_ticks
 
 func initialize(target):
 	_target = target
 	_target.visible = false
 	_target._state_manager._is_invincible = true
 	
-	_total_ticks = _target._state_manager._i_frame_ticks
-	
 	_timer = Timer.new()
 	_timer.connect("timeout", self, "on_tick")
 	self.add_child(_timer)
 	_timer.start(_invisible_time)
 
+func initialize_timeout_timer(duration):
+	if not is_instance_valid(_despawn_timer):
+		_despawn_duration = duration
+		_despawn_timer = Timer.new()
+		_despawn_timer.connect("timeout", self, "remove_modifier")
+		_despawn_timer.set_one_shot(true)
+		add_child(_despawn_timer)
+		_despawn_timer.start(duration)
+	else:
+		if _despawn_timer.get_time_left() < duration:
+			_despawn_timer.start(duration)
 
 
-#==== Stack Handling ====#
+
+#==== Common Components ====#
+
 func on_stack(new_i_frames):
-	pass
+	_total_ticks = new_i_frames._total_ticks
+	if _despawn_duration != null:
+		initialize_timeout_timer(_despawn_duration)
+
+
+func remove_modifier():
+	_timer.stop()
+	_target.visible = true
+	_target._hurtbox.set_collision_mask_bit(2, true)
+	_target._state_manager._is_invincible = false
+	_timer.queue_free()
+	_needs_to_be_removed = true
+	_target._state_manager.remove_modifier(self)
 
 
 
-
-
-
-#==== On Tick ====#
+#==== Specific Components ====#
 
 func on_tick():
 	_timer.stop()
@@ -63,17 +85,3 @@ func on_tick():
 		else:
 			_target.visible = true
 			_timer.start(_visible_time)
-
-
-
-
-func remove_modifier():
-	_timer.stop()
-	_target.visible = true
-	_target._hurtbox.set_collision_mask_bit(2, true)
-	_target._state_manager._is_invincible = false
-	_timer.queue_free()
-	_needs_to_be_removed = true
-	_target._state_manager.remove_modifier(self)
-
-

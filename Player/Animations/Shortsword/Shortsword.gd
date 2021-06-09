@@ -22,14 +22,12 @@ func initialize():
 func return_attack(): # REFACTOR add knockback as well
 	if _attack._id == "down_air":
 		var speed = _player_manager._velocity.y
-		print(speed)
 		if speed <= 12000:
 			_attack._damage = 1
 		elif speed <= 20000:
 			_attack._damage = 2
 		else:
 			_attack._damage = 3
-	print(_attack._damage)
 	return _attack
 
 

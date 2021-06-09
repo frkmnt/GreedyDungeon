@@ -26,7 +26,7 @@ var _is_invincible = false
 #==== Physics Variables ====#
 var _is_on_floor = true
 var _is_on_ceiling = false
-var _facing_direction = 1
+var _facing_direction = 1 # 0 is left, 1 is right
 
 var _walk_speed = 400
 var _max_walk_speed = 5000
@@ -38,7 +38,7 @@ var _jump_force = -12500
 
 
 #==== Meta Variables ====#
-var _max_hp = 10
+var _max_hp = 5
 var _current_hp = _max_hp
 
 var _i_frame_ticks = 4
@@ -110,8 +110,6 @@ func handle_player_state():
 		_number_of_jumps = 0
 
 
-
-
 func set_state_idle(): #also triggered when an animation finishes
 	_current_action = "neutral"
 	_is_stunned = false
@@ -141,13 +139,14 @@ func set_state_hurt():
 
 func set_state_hurt_recovery():
 	var i_frames = _i_frames_modifier.instance()
+	i_frames.initialize_values(2) # 2 ticks
 	add_modifier(i_frames)
 	set_state_idle()
 
 
 func check_if_dead():
 	if _current_hp <= 0:
-		#queue_free() #TODO REFACTOR crashes the game 
+		# TODO handle death 
 		print("dead")
 
 
@@ -175,19 +174,25 @@ func handle_jump_action():
 func handle_attack_action(action_input):
 	if _is_touching_exit_portal: 
 		print("EXIT_GAME")
-		
 	else:
-		print(action_input)
 		_current_action = "attack"
+		_can_move = false
 		if _is_on_floor:
-			_can_move = false
 			
-			match action_input: # REFACTOR WEAPONS TO CHANGE POSITION EACH ANIMATION KEYFRAME
+			match action_input: # TODO WEAPONS ARE TO CHANGE POSITION EACH ANIMATION KEYFRAME
 				"neutral":
 					_weapon.neutral_ground()
 				"up":
 					_weapon.up_ground()
-				"side":
+				"left":
+					if _facing_direction == 1:
+						_player.change_direction()
+						_facing_direction = -1
+					_weapon.side_ground()
+				"right":
+					if _facing_direction == -1:
+						_player.change_direction()
+						_facing_direction = 1
 					_weapon.side_ground()
 				"down":
 					_weapon.neutral_ground()
@@ -198,7 +203,15 @@ func handle_attack_action(action_input):
 					_weapon.side_air()
 				"up":
 					_weapon.up_air()
-				"side":
+				"left":
+					if _facing_direction == 1:
+						_player.change_direction()
+						_facing_direction = -1
+					_weapon.side_air()
+				"right":
+					if _facing_direction == -1:
+						_player.change_direction()
+						_facing_direction = 1
 					_weapon.side_air()
 				"down":
 					_weapon.down_air()
@@ -265,13 +278,11 @@ func increase_movement_speed(value):
 
 
 
-
-
-
 #==== Modifiers ====#
 
 func add_modifier(new_modifier):
-	print("adding modifier ", new_modifier)
+#	print("adding modifier ", new_modifier)
+	var was_added = true
 	var can_add_modifier = true
 	
 	# check if can add modifier
@@ -282,20 +293,21 @@ func add_modifier(new_modifier):
 	if not can_add_modifier:
 		return
 	
-	
 	aux_modifier = get_modifier(new_modifier._id)
 	if not aux_modifier == null: # existing modifier
-		print("existing modifier")
+		# print("existing modifier")
+		was_added = false
 		aux_modifier.on_stack(new_modifier)
 	
 	else: # new modifier
-		print("new modifier")
+		# print("new modifier")
 		var modifier_map
 		for modifier_type_id in new_modifier._modifier_ids:
 			modifier_map = _modifier_type_list[modifier_type_id]
 			modifier_map[new_modifier._id] = new_modifier
 		_modifier_container.add_child(new_modifier)
 		new_modifier.initialize(_player) 
+	return was_added
 
 
 
@@ -305,7 +317,7 @@ func remove_modifier(modifier):
 	var modifier_map
 	var cur_modifier
 	for modifier_type_id in modifier._modifier_ids:
-		print("removing modifier: ", modifier_type_id)
+		# print("removing modifier: ", modifier_type_id)
 		modifier_map = _modifier_type_list[modifier_type_id]
 		modifier_map.erase(modifier._id)
 

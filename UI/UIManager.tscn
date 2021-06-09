@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://UI/UIManager.gd" type="Script" id=1]
 [ext_resource path="res://UI/HUD/HUD.tscn" type="PackedScene" id=2]
 [ext_resource path="res://UI/Inventory/Inventory.tscn" type="PackedScene" id=3]
 [ext_resource path="res://UI/Camera/Camera.tscn" type="PackedScene" id=4]
+[ext_resource path="res://UI/Inventory/EnableInventoryButton.tscn" type="PackedScene" id=5]
 
 [node name="UIManager" type="Node2D"]
 z_index = 3
@@ -11,14 +12,17 @@ script = ExtResource( 1 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
+[node name="EnableInventoryButton" parent="CanvasLayer" instance=ExtResource( 5 )]
+margin_left = 970.0
+margin_top = 20.0
+margin_right = 1000.0
+margin_bottom = 50.0
+
 [node name="HUD" parent="CanvasLayer" instance=ExtResource( 2 )]
 
 [node name="InventoryPanel" parent="CanvasLayer" instance=ExtResource( 3 )]
 visible = false
-margin_left = 7.0
-margin_top = 10.0
-margin_right = 7.0
-margin_bottom = 570.0
-rect_scale = Vector2( 0.32, 0.32 )
+margin_top = 20.0
+margin_bottom = 580.0
 
 [node name="Camera" parent="." instance=ExtResource( 4 )]

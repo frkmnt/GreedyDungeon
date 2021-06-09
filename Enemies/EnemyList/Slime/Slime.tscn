@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://Enemies/EnemyList/Slime/Slime.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Visual/Enemies/Slime/attack/slime-attack-4.png" type="Texture" id=2]
@@ -18,15 +18,21 @@
 [ext_resource path="res://Assets/Visual/Enemies/Slime/move/slime-move-1.png" type="Texture" id=16]
 [ext_resource path="res://Assets/Visual/Enemies/Slime/move/slime-move-2.png" type="Texture" id=17]
 [ext_resource path="res://Assets/Visual/Enemies/Slime/move/slime-move-3.png" type="Texture" id=18]
-[ext_resource path="res://Enemies/EnemyList/Slime/SlimeAttack.gd" type="Script" id=19]
+[ext_resource path="res://Enemies/Utils/State/StandardState.gd" type="Script" id=19]
+[ext_resource path="res://Objects/Utils/PickableObject.tscn" type="PackedScene" id=20]
+[ext_resource path="res://Enemies/Utils/Hitbox/StandardHitbox.gd" type="Script" id=21]
+[ext_resource path="res://Enemies/Utils/Physics/StandardPhysics.gd" type="Script" id=22]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 11.4439, 6.41485 )
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 16, 8 )
+extents = Vector2( 16, 10 )
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 14, 7 )
+
+[sub_resource type="Animation" id=4]
 length = 0.5
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:texture")
@@ -40,25 +46,13 @@ tracks/0/keys = {
 "update": 1,
 "values": [ ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 2 ) ]
 }
-tracks/1/type = "value"
-tracks/1/path = NodePath("../Hitbox/HitboxShape:shape")
+tracks/1/type = "method"
+tracks/1/path = NodePath("../StandardState")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.3 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ SubResource( 2 ) ]
-}
-tracks/2/type = "method"
-tracks/2/path = NodePath("..")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
 "times": PoolRealArray( 0.5 ),
 "transitions": PoolRealArray( 1 ),
 "values": [ {
@@ -66,32 +60,32 @@ tracks/2/keys = {
 "method": "set_state_neutral"
 } ]
 }
+tracks/2/type = "value"
+tracks/2/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:shape")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ SubResource( 2 ), SubResource( 3 ) ]
+}
 tracks/3/type = "value"
-tracks/3/path = NodePath("../Hitbox/HitboxShape:position")
+tracks/3/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/enabled = true
 tracks/3/keys = {
-"times": PoolRealArray( 0.3 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ Vector2( 0, 5 ) ]
-}
-tracks/4/type = "value"
-tracks/4/path = NodePath("../Hitbox/HitboxShape:disabled")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"times": PoolRealArray( 0.3, 0.4 ),
+"times": PoolRealArray( 0.2, 0.3 ),
 "transitions": PoolRealArray( 1, 1 ),
-"update": 1,
-"values": [ false, true ]
+"update": 0,
+"values": [ Vector2( 2, 1 ), Vector2( 0, 4 ) ]
 }
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=5]
 length = 0.4
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:texture")
@@ -105,81 +99,42 @@ tracks/0/keys = {
 "update": 1,
 "values": [ ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ) ]
 }
-tracks/1/type = "method"
-tracks/1/path = NodePath("..")
+tracks/1/type = "value"
+tracks/1/path = NodePath("..:collision_mask")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.4 ),
-"transitions": PoolRealArray( 1 ),
-"values": [ {
-"args": [  ],
-"method": "die"
-} ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("../Hurtbox/HurtboxShape:disabled")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ true ]
-}
-tracks/3/type = "value"
-tracks/3/path = NodePath("..:collision_mask")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
 "values": [ 1 ]
 }
-
-[sub_resource type="Animation" id=5]
-length = 0.4
-loop = true
-tracks/0/type = "value"
-tracks/0/path = NodePath(".:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 1,
-"values": [ ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ) ]
-}
-tracks/1/type = "method"
-tracks/1/path = NodePath("..")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0.4 ),
-"transitions": PoolRealArray( 1 ),
-"values": [ {
-"args": [  ],
-"method": "set_state_neutral"
-} ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("../Hitbox/HitboxShape:disabled")
+tracks/2/type = "method"
+tracks/2/path = NodePath("../StandardState")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "spawn_pickable_object"
+}, {
+"args": [  ],
+"method": "die"
+} ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("../StandardHitbox/HurtBox/HurtBoxShape:disabled")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
@@ -199,10 +154,40 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 1,
+"values": [ ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ) ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("../StandardState")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.4 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "set_state_neutral"
+} ]
+}
+
+[sub_resource type="Animation" id=7]
+length = 0.4
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
 "values": [ ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ) ]
 }
 
-[sub_resource type="RectangleShape2D" id=7]
+[sub_resource type="RectangleShape2D" id=8]
 extents = Vector2( 16, 8 )
 
 [node name="Slime" type="KinematicBody2D"]
@@ -224,38 +209,52 @@ process_parent = true
 physics_process_parent = true
 
 [node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 3 )
+scale = Vector2( -1, 1 )
+texture = ExtResource( 15 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite"]
-anims/attack = SubResource( 3 )
-anims/die = SubResource( 4 )
-anims/hurt = SubResource( 5 )
-anims/move = SubResource( 6 )
+anims/attack = SubResource( 4 )
+anims/death = SubResource( 5 )
+anims/hurt = SubResource( 6 )
+anims/move = SubResource( 7 )
 
-[node name="Hitbox" type="Area2D" parent="."]
+[node name="StandardState" type="Node" parent="."]
+script = ExtResource( 19 )
+_current_hp = 2
+
+[node name="StandardPhysics" type="Node2D" parent="."]
+script = ExtResource( 22 )
+_GRAVITY = 500
+_MAX_WALK_FORCE = 20
+_DISTANCE_TO_ATTACK_PLAYER = Vector2( 20, 15 )
+
+[node name="TurnAroundCast" type="RayCast2D" parent="StandardPhysics"]
+position = Vector2( 17, 0 )
+enabled = true
+cast_to = Vector2( 0, 15 )
+
+[node name="StandardHitbox" type="Node2D" parent="."]
+script = ExtResource( 21 )
+
+[node name="HitBox" type="Area2D" parent="StandardHitbox"]
 monitorable = false
 collision_layer = 4
 collision_mask = 0
-script = ExtResource( 19 )
 
-[node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
-position = Vector2( 0, 5 )
-shape = SubResource( 2 )
-disabled = true
+[node name="HitBoxShape" type="CollisionShape2D" parent="StandardHitbox/HitBox"]
+position = Vector2( 0, 4 )
+shape = SubResource( 3 )
 
-[node name="Hurtbox" type="Area2D" parent="."]
+[node name="HurtBox" type="Area2D" parent="StandardHitbox"]
 visible = false
 monitorable = false
 collision_layer = 16
 collision_mask = 0
 
-[node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
+[node name="HurtBoxShape" type="CollisionShape2D" parent="StandardHitbox/HurtBox"]
 position = Vector2( 0, 5 )
-shape = SubResource( 7 )
+shape = SubResource( 8 )
 
-[node name="TurnAroundCast" type="RayCast2D" parent="."]
-position = Vector2( -15, 0 )
-enabled = true
-cast_to = Vector2( 0, 15 )
-[connection signal="area_entered" from="Hitbox" to="Hitbox" method="on_hitbox_entered"]
-[connection signal="area_entered" from="Hurtbox" to="." method="received_hit"]
+[node name="PickableObject" parent="." instance=ExtResource( 20 )]
+[connection signal="area_entered" from="StandardHitbox/HitBox" to="StandardHitbox" method="on_hitbox_entered"]
+[connection signal="area_entered" from="StandardHitbox/HurtBox" to="StandardHitbox" method="on_hurtbox_entered"]

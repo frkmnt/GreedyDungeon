@@ -4,7 +4,6 @@ extends Node2D
 var _camera 
 var _enemy_manager
 
-
 # ==== Components ==== #
 var _map_generator
 var _money_generator
@@ -13,9 +12,10 @@ var _room_container
 var _limit_left
 var _limit_right
 
+# ==== Constants ==== #
+const room_width = 400
 
 # ==== Variables ==== #
-
 var _instantiated_rooms = [] # nº0 is the newest
 
 var _total_rooms_instanced = 0
@@ -34,7 +34,6 @@ func initialize():
 	_limit_left = $PlayerLimitLeft
 	_limit_right = $ PlayerLimitRight
 	initialize_map_generator()
-	spawn_starter_rooms()
 
 
 func initialize_map_generator():
@@ -46,7 +45,6 @@ func initialize_map_generator():
 
 func spawn_starter_rooms():
 	var room_container = get_child(1)
-	print(room_container)
 	
 	var room_instance = _map_generator.spawn_first_room()
 	_instantiated_rooms.append(room_instance)
@@ -81,7 +79,7 @@ func handle_player_position(p_pos):
 func handle_camera_position(p_pos):
 	var distance_player_to_camera = p_pos - _camera.position.x
 	var move_offset = distance_player_to_camera - 200
-	if move_offset > 0: #REFACTOR possibly causes camera stutter
+	if move_offset > 0: # TODO possibly causes camera stutter
 		move_offset = int(move_offset)
 		if _is_currently_boss_battle:
 			var new_cam_pos = _camera.position.x + move_offset
@@ -105,8 +103,9 @@ func handle_camera_position(p_pos):
 
 func handle_level_spawn(p_pos):
 	if p_pos >= _room_spawn_position:
-		#_enemy_manager.update_despawn_position(_room_spawn_position - 500)
-		_room_spawn_position = _room_spawn_position + 400
+		print("p_pos ", p_pos)
+		#_enemy_manager.update_despawn_position(_room_spawn_position - 500) # TODO implement
+		_room_spawn_position = _room_spawn_position + room_width
 		_map_generator._semaphore.post()
 
 
@@ -119,7 +118,14 @@ func on_boss_room_spawn():
 	_boss_max_camera_distance = _room_spawn_position
 
 
-
+func match_room_with_x_position(x_position): # returns the room that contains the position
+	var matched_room = null
+	for room in _room_container.get_children():
+		if x_position <= room.position.x + room_width:
+			print("matched ", room.position.x)
+			matched_room = room
+			break
+	return matched_room
 
 
 
