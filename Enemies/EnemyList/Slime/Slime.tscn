@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://Enemies/EnemyList/Slime/Slime.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Visual/Enemies/Slime/attack/slime-attack-4.png" type="Texture" id=2]
@@ -22,6 +22,7 @@
 [ext_resource path="res://Objects/Utils/PickableObject.tscn" type="PackedScene" id=20]
 [ext_resource path="res://Enemies/Utils/Hitbox/StandardHitbox.gd" type="Script" id=21]
 [ext_resource path="res://Enemies/Utils/Physics/StandardPhysics.gd" type="Script" id=22]
+[ext_resource path="res://Enemies/Utils/Health/EnemyHealthBar.tscn" type="PackedScene" id=23]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 11.4439, 6.41485 )
@@ -57,7 +58,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "set_state_neutral"
+"method": "set_state_move"
 } ]
 }
 tracks/2/type = "value"
@@ -140,6 +141,30 @@ tracks/3/keys = {
 "update": 1,
 "values": [ true ]
 }
+tracks/4/type = "value"
+tracks/4/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("../EnemyHealthBar:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
 
 [sub_resource type="Animation" id=6]
 length = 0.4
@@ -167,7 +192,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "set_state_neutral"
+"method": "set_state_move"
 } ]
 }
 
@@ -191,6 +216,7 @@ tracks/0/keys = {
 extents = Vector2( 16, 8 )
 
 [node name="Slime" type="KinematicBody2D"]
+scale = Vector2( 0.8, 0.8 )
 z_index = 1
 collision_layer = 0
 collision_mask = 3
@@ -209,8 +235,8 @@ process_parent = true
 physics_process_parent = true
 
 [node name="Sprite" type="Sprite" parent="."]
-scale = Vector2( -1, 1 )
 texture = ExtResource( 15 )
+flip_h = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite"]
 anims/attack = SubResource( 4 )
@@ -220,13 +246,14 @@ anims/move = SubResource( 7 )
 
 [node name="StandardState" type="Node" parent="."]
 script = ExtResource( 19 )
-_current_hp = 2
+_max_hp = 10
 
 [node name="StandardPhysics" type="Node2D" parent="."]
 script = ExtResource( 22 )
 _GRAVITY = 500
-_MAX_WALK_FORCE = 20
-_DISTANCE_TO_ATTACK_PLAYER = Vector2( 20, 15 )
+_MAX_WALK_FORCE = 15
+_WALK_FORCE = 15
+_DISTANCE_TO_ATTACK_PLAYER = Vector2( 20, 20 )
 
 [node name="TurnAroundCast" type="RayCast2D" parent="StandardPhysics"]
 position = Vector2( 17, 0 )
@@ -256,5 +283,12 @@ position = Vector2( 0, 5 )
 shape = SubResource( 8 )
 
 [node name="PickableObject" parent="." instance=ExtResource( 20 )]
+
+[node name="EnemyHealthBar" parent="." instance=ExtResource( 23 )]
+margin_left = -15.0
+margin_top = -9.0
+margin_right = 15.0
+margin_bottom = -4.0
+
 [connection signal="area_entered" from="StandardHitbox/HitBox" to="StandardHitbox" method="on_hitbox_entered"]
 [connection signal="area_entered" from="StandardHitbox/HurtBox" to="StandardHitbox" method="on_hurtbox_entered"]

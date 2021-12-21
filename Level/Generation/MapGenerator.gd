@@ -4,7 +4,7 @@ extends Node2D
 
 #==== Components ====#
 var _level_manager
-var _money_generator
+var _loot_generator
 var _room_container
 var _enemy_manager
 
@@ -43,7 +43,7 @@ var _thread
 func initialize(level_manager): 
 	_level_manager = level_manager
 	_enemy_manager = level_manager.get_parent().get_node("EnemyManager")
-	_money_generator = _level_manager._money_generator
+	_loot_generator = _level_manager._loot_generator
 	_room_container = get_parent().get_child(1)
 	
 	load_object_prefabs()
@@ -147,7 +147,7 @@ func spawn_starter_room(): # no chests or portals
 	room_instance = get_random_room().instance()
 	room_instance.initialize()
 	decorate_room(room_instance)
-	_money_generator.generate_loot_in_room(room_instance, _current_nr_of_rooms_generated)
+	_loot_generator.generate_loot_in_room(room_instance, _current_nr_of_rooms_generated)
 	return room_instance
 
 
@@ -173,7 +173,7 @@ func spawn_normal_room():
 	room_instance = get_random_room().instance()
 	room_instance.initialize()
 	decorate_room(room_instance)
-	_money_generator.generate_loot_in_room(room_instance, _current_nr_of_rooms_generated)
+	_loot_generator.generate_loot_in_room(room_instance, _current_nr_of_rooms_generated)
 	if _current_nr_of_rooms_generated % 10 == 0: # portal room
 		generate_exit_portal(room_instance)
 	return room_instance

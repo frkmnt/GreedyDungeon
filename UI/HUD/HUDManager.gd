@@ -21,7 +21,7 @@ func initialize(parent_menu):
 
 func initialize_components_with_player(player):
 	_input_ui_manager.initialize_with_player(player)
-	_health_bar.initialize_with_player(player)
+	_health_bar.initialize_with_player(player._state_manager._max_hp)
 
 
 #==== Component Interaction ====#

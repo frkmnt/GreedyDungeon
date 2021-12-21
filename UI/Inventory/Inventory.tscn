@@ -544,6 +544,9 @@ margin_left = 36.0
 margin_top = 18.0
 margin_right = 100.0
 margin_bottom = 82.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Torso" type="Button" parent="EquipmentPanel"]
 margin_left = 136.0
@@ -615,6 +618,8 @@ text = "X"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
 [connection signal="hide" from="." to="." method="_on_inventory_panel_hide"]
+[connection signal="button_down" from="EquipmentPanel/Weapon" to="." method="on_equipped_weapon_slot_press"]
 [connection signal="pressed" from="InfoPanel/UseButton" to="." method="use_item_on_slot"]
 [connection signal="button_up" from="DisableInventoryVisibilityButton" to="." method="on_disable_inventory_button_click"]

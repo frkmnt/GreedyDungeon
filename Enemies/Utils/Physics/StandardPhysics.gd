@@ -16,6 +16,7 @@ export (int) var _MAX_WALK_FORCE = 30
 export (int) var _WALK_FORCE = 20
 export (int) var _STOP_FORCE = 5
 export (Vector2) var _DISTANCE_TO_ATTACK_PLAYER = Vector2(0, 0)
+export (int) var _DISTANCE_TO_ATTACK_PLAYER_Y_OFFSET = 0 # in case the enemy is taller than the player
 
 var _position
 var _velocity = Vector2(0, 0)
@@ -48,8 +49,7 @@ func handle_physics(delta, can_move):
 	
 	if _is_stoping:
 		stop_movement()
-	
-	if can_move: # TODO improve
+	elif can_move: # TODO improve
 		force.x = _WALK_FORCE * _facing_direction
 		_velocity += force * delta
 		if abs(_velocity.x) > _MAX_WALK_FORCE:
@@ -61,10 +61,8 @@ func handle_physics(delta, can_move):
 
 func change_direction():
 	_facing_direction *= -1
-	_velocity.x = _velocity.x * _facing_direction
-	var new_scale = _parent.get_scale()
-	new_scale.x *= -1
-	_parent.set_scale(new_scale)
+	_velocity.x = _velocity.x * -1
+	scale.x *= -1
 
 
 func stop_movement():
@@ -97,19 +95,42 @@ func get_player_direction():
 	if _player.position.x > _position.x:
 		player_position = 1 # right
 	return player_position
-	
 
-func is_player_in_attack_range():
+
+func handle_player_range():
+	var _is_player_in_attack_range = [false, false] # is_in_attack_range, is_player_behind_in_range, is_player_in_move_range
+
 	var p_position = _player.position
-	var relative_player_y_pos = abs(_position.y - p_position.y)
+	var distance_to_player = p_position - _position
 	
-	if relative_player_y_pos < _DISTANCE_TO_ATTACK_PLAYER.y:
-		var relative_player_x_pos = p_position.x - _position.x
-		var player_direction = sign(relative_player_x_pos)
-		relative_player_x_pos = abs(relative_player_x_pos)
-		if relative_player_x_pos < _DISTANCE_TO_ATTACK_PLAYER.x \
-		and player_direction == _facing_direction:
+	if distance_to_player.y > 0:
+		distance_to_player.y -= _DISTANCE_TO_ATTACK_PLAYER_Y_OFFSET
+	if distance_to_player.y <= 0 \
+	and abs(distance_to_player.y) <= _DISTANCE_TO_ATTACK_PLAYER.y: # player in valid range
+		if abs(distance_to_player.x) <= _DISTANCE_TO_ATTACK_PLAYER.x:
+			if sign(distance_to_player.x) == _facing_direction:
+				_is_player_in_attack_range[0] = true
+			else:
+				_is_player_in_attack_range[1] = true
+	return _is_player_in_attack_range
+
+
+
+#	var player_direction_horizontal = sign(p_position.x - _position.x)
+#	if player_direction_horizontal == 0:
+#		player_direction_horizontal = _facing_direction
+
+
+
+
+
+
+func is_player_on_top():
+	var p_position = _player.position
+	if abs(_position.x - p_position.x) < 9 \
+		and p_position.y > 46 and p_position.y < 52:
 			return true
+
 
 func check_if_needs_to_be_despawned():
 	if _position.x <= _despawn_pos.x or _position.y >= _despawn_pos.y:

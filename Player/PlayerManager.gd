@@ -7,7 +7,6 @@ var _level_manager
 
 #==== Components ====#
 var _effect_container
-var _weapon
 var _modifier_container
 var _animator
 var _hitbox
@@ -34,11 +33,11 @@ func initialize():
 	
 	initialize_effect_container()
 	initialize_animations()
-	initialize_weapons()
 	initialize_hitboxes()
 	
 	initialize_input_handler()
 	initialize_inventory()
+	initialize_weapons()
 	initialize_map_manager()
 	
 	initialize_state_manager()
@@ -61,8 +60,10 @@ func initialize_animations():
 	_animator = $Sprite.get_child(0)
 
 func initialize_weapons():
-	_weapon = $Weapon
-	_weapon.initialize()
+	var _loot_generator = _overseer._level_manager._loot_generator
+	var weapon = _loot_generator.spawn_default_shortsword()
+	weapon.init_with_player(self)
+	_inventory.load_initial_equipment(weapon)
 
 func initialize_hitboxes():
 	_hitbox = $Hitbox
@@ -271,7 +272,7 @@ func lose_hp(amount):
 
 
 func get_current_attack_values():
-	return _weapon.return_attack()
+	return _inventory._weapon.get_current_attack_values()
 
 
 

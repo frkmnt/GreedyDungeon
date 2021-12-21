@@ -21,7 +21,6 @@ func initialize(object_data):
 func use_item(player):
 	var modifier_manager = player._overseer._modifier_manager
 	var shield = modifier_manager.get_modifier_instance(3)
-	shield.initialize(player)
 	var was_added = player._state_manager.add_modifier(shield)
 	if was_added:
 		shield.initialize_timeout_timer(20)

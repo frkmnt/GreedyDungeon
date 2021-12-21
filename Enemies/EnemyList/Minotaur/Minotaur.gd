@@ -381,7 +381,7 @@ func is_player_in_attack_range():
 		return true
 
 func is_player_on_top():
-	if abs(position.x - _p_position.x) < 7 \
+	if abs(position.x - _p_position.x) < 9 \
 		and _p_position.y > 110 and _p_position.y < 118:
 			return true
 

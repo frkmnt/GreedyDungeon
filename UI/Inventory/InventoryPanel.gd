@@ -2,19 +2,17 @@ extends Node
 
 #==== References ====#
 var _parent_menu
-
-#==== Components ====#
 var _player
 var _inventory
 
-
-#==== Variables ====#
-
+#==== Components ====#
 var _items_panel
 var _equipment_panel
 var _info_label
 var _use_button 
 
+
+#==== Variables ====#
 var _currently_selected_slot
 
 
@@ -46,7 +44,11 @@ func _ready():
 
 
 
-#=== UI ===
+#==== UI ====#
+
+func add_weapon_to_slot(weapon):
+	var weapon_slot = _equipment_panel.get_child(3)
+	weapon_slot.icon = weapon._sprite
 
 func add_item_to_slot(item, slot_index):
 	var slot = _items_panel.get_child(slot_index)
@@ -80,12 +82,34 @@ func decrement_item_amount_in_slot(quantity, slot_index):
 func on_slot_pressed(slot_id): 
 	var slot_item = _inventory._item_list[slot_id][0]
 	if not slot_item == null:
-		_info_label.text = slot_item._object_data._description
 		_currently_selected_slot = slot_id
-		if slot_item.has_method("use_item"):
+		var item_type = slot_item._object_data._type
+		if item_type == "weapon":
 			_use_button.visible = true
+			_use_button.text = "Equip Weapon"
+			_info_label.text = generate_weapon_label(slot_item)
+		elif item_type != "money":
+			_use_button.visible = true
+			_use_button.text = "Use Item"
+			_info_label.text = generate_item_label(slot_item)
+		else: # money
+			_info_label.text = generate_item_label(slot_item)
+
 	else:
 		_info_label.text = ""
+
+
+func on_equipped_weapon_slot_press():
+	_info_label.text = generate_weapon_label(_inventory._weapon)
+	_use_button.visible = false
+
+
+
+func use_item_on_slot():
+	var slot_item = _inventory._item_list[_currently_selected_slot][0]
+	_inventory.remove_item_from_slot(_currently_selected_slot)
+	slot_item.use_item(_player)
+
 
 
 func _on_inventory_panel_hide():
@@ -95,10 +119,7 @@ func _on_inventory_panel_hide():
 	
 
 
-func use_item_on_slot():
-	var slot_item = _inventory._item_list[_currently_selected_slot][0]
-	slot_item.use_item(_player)
-	_inventory.remove_item_from_slot(_currently_selected_slot)
+
 
 
 
@@ -115,6 +136,28 @@ func on_disable_inventory_button_click():
 
 
 
+
+
+#==== Label Generation ====#
+
+func generate_item_label(item):
+	var item_object_data = item._object_data
+	return \
+		item_object_data._name + "\n" + \
+		item_object_data._description + "\n\n" + \
+		"Value: " + String(item_object_data._value)
+
+func generate_weapon_label(weapon):
+	var weapon_object_data = weapon._object_data
+	var weapon_data = weapon._weapon_data
+	return \
+		weapon_object_data._name + "\n" + \
+		weapon_object_data._description + "\n\n" + \
+		"Average Damage: " + String(weapon_data._average_attack_values) + "\n" + \
+		"Damage Modifier: " + String(stepify(weapon_data._damage_modifier, 0.1)) + "\n" + \
+		"Knockback Modifier: " + String(stepify(weapon_data._knockback_modifier, 0.1)) + "\n" + \
+		"Critical Hit Modifier: " + String(stepify(weapon_data._crit_modifier, 0.1)) + "\n" + \
+		"Critical Hit Chance: " + String(stepify(weapon_data._crit_chance, 0.1)) + "%"
 
 
 

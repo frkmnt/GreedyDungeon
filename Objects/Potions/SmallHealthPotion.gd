@@ -10,7 +10,7 @@ func initialize(object_data):
 	var type = "item"
 	var id = 19
 	var name = "Small Health Potion"
-	var description = "A potion that instantly restores 2 HP." 
+	var description = "A potion that instantly restores 10 HP." 
 	var value = 75
 	var stack_limit = 2
 	_object_data = object_data
@@ -20,7 +20,7 @@ func initialize(object_data):
 #==== Logic ====#
 
 func use_item(player):
-	player.add_hp(2)
+	player.add_hp(10)
 
 
 func get_new_instance():

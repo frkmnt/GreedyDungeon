@@ -1,4 +1,4 @@
-[gd_scene load_steps=80 format=2]
+[gd_scene load_steps=81 format=2]
 
 [ext_resource path="res://Enemies/EnemyList/Skeleton/Skeleton.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Visual/Enemies/Skeleton/Attack/sprite_08.png" type="Texture" id=2]
@@ -72,6 +72,7 @@
 [ext_resource path="res://Enemies/Utils/State/StandardState.gd" type="Script" id=70]
 [ext_resource path="res://Objects/Utils/PickableObject.tscn" type="PackedScene" id=71]
 [ext_resource path="res://Enemies/Utils/Hitbox/StandardHitbox.gd" type="Script" id=72]
+[ext_resource path="res://Enemies/Utils/Health/EnemyHealthBar.tscn" type="PackedScene" id=73]
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 5.37783
@@ -93,34 +94,34 @@ tracks/0/keys = {
 "update": 1,
 "values": [ ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 2 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ), ExtResource( 16 ), ExtResource( 17 ), ExtResource( 18 ), ExtResource( 19 ), ExtResource( 20 ) ]
 }
-tracks/1/type = "method"
-tracks/1/path = NodePath("../StandardState")
+tracks/1/type = "value"
+tracks/1/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.9 ),
-"transitions": PoolRealArray( 1 ),
-"values": [ {
-"args": [  ],
-"method": "set_state_neutral"
-} ]
-}
-tracks/2/type = "value"
-tracks/2/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
 "times": PoolRealArray( 0.3, 0.4 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ false, true ]
 }
+tracks/2/type = "method"
+tracks/2/path = NodePath("../StandardState")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.95 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "set_state_move"
+} ]
+}
 
-[sub_resource type="Animation" id=8]
+[sub_resource type="Animation" id=3]
 resource_name = "death"
 length = 0.8
 step = 0.05
@@ -148,25 +149,20 @@ tracks/1/keys = {
 "update": 1,
 "values": [ 1 ]
 }
-tracks/2/type = "method"
-tracks/2/path = NodePath("../StandardState")
+tracks/2/type = "value"
+tracks/2/path = NodePath("../StandardHitbox/HurtBox/HurtBoxShape:disabled")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.8 ),
-"transitions": PoolRealArray( 1, 1 ),
-"values": [ {
-"args": [  ],
-"method": "spawn_pickable_object"
-}, {
-"args": [  ],
-"method": "die"
-} ]
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 tracks/3/type = "value"
-tracks/3/path = NodePath("../StandardHitbox/HurtBox/HurtBoxShape:disabled")
+tracks/3/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/imported = false
@@ -178,20 +174,37 @@ tracks/3/keys = {
 "values": [ true ]
 }
 tracks/4/type = "value"
-tracks/4/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
+tracks/4/path = NodePath("../EnemyHealthBar:modulate")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/imported = false
 tracks/4/enabled = true
 tracks/4/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ true ]
+"times": PoolRealArray( 0, 0.55 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/5/type = "method"
+tracks/5/path = NodePath("../StandardState")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 0.8 ),
+"transitions": PoolRealArray( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "spawn_pickable_object"
+}, {
+"args": [  ],
+"method": "die"
+} ]
 }
 
 [sub_resource type="Animation" id=4]
-length = 0.6
+length = 0.64
 step = 0.04
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:texture")
@@ -205,31 +218,31 @@ tracks/0/keys = {
 "update": 1,
 "values": [ ExtResource( 33 ), ExtResource( 34 ), ExtResource( 35 ), ExtResource( 36 ), ExtResource( 37 ), ExtResource( 38 ), ExtResource( 39 ), ExtResource( 40 ), ExtResource( 41 ), ExtResource( 42 ), ExtResource( 43 ), ExtResource( 44 ), ExtResource( 45 ), ExtResource( 46 ), ExtResource( 47 ), ExtResource( 48 ) ]
 }
-tracks/1/type = "method"
-tracks/1/path = NodePath("../StandardState")
+tracks/1/type = "value"
+tracks/1/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0.6 ),
+"times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
-"values": [ {
-"args": [  ],
-"method": "set_state_neutral"
-} ]
+"update": 1,
+"values": [ true ]
 }
-tracks/2/type = "value"
-tracks/2/path = NodePath("../StandardHitbox/HitBox/HitBoxShape:disabled")
+tracks/2/type = "method"
+tracks/2/path = NodePath("../StandardState")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0 ),
+"times": PoolRealArray( 0.64 ),
 "transitions": PoolRealArray( 1 ),
-"update": 1,
-"values": [ true ]
+"values": [ {
+"args": [  ],
+"method": "set_state_move"
+} ]
 }
 
 [sub_resource type="Animation" id=5]
@@ -257,6 +270,7 @@ height = 15.0
 extents = Vector2( 9, 13 )
 
 [node name="Skeleton" type="KinematicBody2D"]
+scale = Vector2( 0.8, 0.8 )
 z_index = 1
 collision_layer = 2147483648
 collision_mask = 3
@@ -275,26 +289,28 @@ process_parent = true
 physics_process_parent = true
 
 [node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 49 )
+texture = ExtResource( 20 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite"]
 playback_process_mode = 0
 anims/attack = SubResource( 2 )
-anims/death = SubResource( 8 )
+anims/death = SubResource( 3 )
 anims/hurt = SubResource( 4 )
 anims/move = SubResource( 5 )
 
 [node name="StandardState" type="Node" parent="."]
 script = ExtResource( 70 )
+_max_hp = 25
 
 [node name="StandardPhysics" type="Node2D" parent="."]
 script = ExtResource( 69 )
 _GRAVITY = 600
-_MAX_WALK_FORCE = 35
+_MAX_WALK_FORCE = 27
 _WALK_FORCE = 15
-_DISTANCE_TO_ATTACK_PLAYER = Vector2( 25, 23 )
+_DISTANCE_TO_ATTACK_PLAYER = Vector2( 23, 20 )
 
 [node name="StandardHitbox" type="Node2D" parent="."]
+visible = false
 script = ExtResource( 72 )
 
 [node name="HitBox" type="Area2D" parent="StandardHitbox"]
@@ -308,6 +324,7 @@ shape = SubResource( 6 )
 disabled = true
 
 [node name="HurtBox" type="Area2D" parent="StandardHitbox"]
+visible = false
 monitorable = false
 collision_layer = 16
 collision_mask = 0
@@ -317,5 +334,12 @@ position = Vector2( 0.177, 2.91 )
 shape = SubResource( 7 )
 
 [node name="PickableObject" parent="." instance=ExtResource( 71 )]
+
+[node name="EnemyHealthBar" parent="." instance=ExtResource( 73 )]
+margin_left = -15.0
+margin_top = -15.0
+margin_right = 15.0
+margin_bottom = -10.0
+
 [connection signal="area_entered" from="StandardHitbox/HitBox" to="StandardHitbox" method="on_hitbox_entered"]
 [connection signal="area_entered" from="StandardHitbox/HurtBox" to="StandardHitbox" method="on_hurtbox_entered"]

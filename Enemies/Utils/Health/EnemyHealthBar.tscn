@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Assets/Themes/EnemyHealthBarTheme.tres" type="Theme" id=1]
+[ext_resource path="res://Enemies/Utils/Health/EnemyHealthBar.gd" type="Script" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.282353, 0.270588, 0.270588, 1 )
+corner_detail = 1
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.686275, 0.298039, 0.298039, 1 )
+
+[sub_resource type="Theme" id=3]
+ProgressBar/colors/font_color = Color( 0.94, 0.94, 0.94, 1 )
+ProgressBar/colors/font_color_shadow = Color( 0, 0, 0, 1 )
+ProgressBar/fonts/font = null
+ProgressBar/styles/bg = SubResource( 1 )
+ProgressBar/styles/fg = SubResource( 2 )
+
+[node name="EnemyHealthBar" type="ProgressBar"]
+visible = false
+margin_right = 30.0
+margin_bottom = 5.0
+rect_pivot_offset = Vector2( 243.815, -73.2047 )
+theme = SubResource( 3 )
+value = 70.0
+percent_visible = false
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EnemyHealthBarForeground" type="ProgressBar" parent="."]
+margin_right = 30.0
+margin_bottom = 5.0
+size_flags_horizontal = 0
+theme = ExtResource( 1 )
+value = 50.0
+percent_visible = false
+__meta__ = {
+"_edit_use_anchors_": false
+}

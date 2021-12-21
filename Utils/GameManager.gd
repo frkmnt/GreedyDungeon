@@ -27,7 +27,7 @@ func initialize_level_manager():
 	_level_manager = preload("res://Level/LevelManager.tscn").instance()
 	add_child(_level_manager)
 	_level_manager.initialize()
-	_enemy_manager.initialize_with_loot_manager(_level_manager._money_generator)
+	_enemy_manager.initialize_with_loot_manager(_level_manager._loot_generator)
 	_level_manager.spawn_starter_rooms()
 
 func initialize_modifier_manager():

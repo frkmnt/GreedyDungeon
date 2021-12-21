@@ -21,24 +21,24 @@ var _despawn_timer
 var _needs_to_be_removed = false
 var _despawn_duration # time until despawn
 
-var _money_luck = 0
-var _chest_luck = 0
+var _loot_luck = 0
+var _chest_luck = 0 # TODO improve
 
 
 
 #==== Bootstrap ====#
 
-func initialize_values(money_luck, chest_luck):
-	_money_luck = money_luck
+func initialize_values(loot_luck, chest_luck):
+	_loot_luck = loot_luck
 	_chest_luck = chest_luck
 
 func initialize(target):
 	_target = target
 	_money_generator = target.get_parent(). \
-		_level_manager._money_generator # TODO improve
+		_level_manager._loot_generator 
 	
-	_money_generator._money_modifier += _money_luck
-	_money_generator._chest_modifier += _chest_luck
+	_money_generator.add_loot_modifier(_loot_luck)
+	_money_generator.add_chest_modifier(_chest_luck)
 
 func initialize_timeout_timer(duration):
 	if not is_instance_valid(_despawn_timer):
@@ -57,16 +57,16 @@ func initialize_timeout_timer(duration):
 #==== Common Components ====#
 
 func on_stack(new_luck):
-	if new_luck._money_luck > _money_luck:
-		_money_luck = new_luck._money_luck
+	if new_luck._loot_luck > _loot_luck:
+		_loot_luck = new_luck._loot_luck
 	if new_luck._chest_luck < _chest_luck:
 		_chest_luck = new_luck._chest_luck
 	if _despawn_duration != null:
 		initialize_timeout_timer(_despawn_duration)
 
 func remove_modifier():
-	_money_generator._money_modifier -= _money_luck
-	_money_generator._chest_modifier -= _chest_luck
+	_money_generator.remove_loot_modifier(_loot_luck)
+	_money_generator.remove_chest_modifier(_chest_luck)
 	_needs_to_be_removed = true
 	_target._state_manager.remove_modifier(self)
 

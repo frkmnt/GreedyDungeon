@@ -14,7 +14,13 @@ var _physics_manager
 var _standard_hitbox
 var _attack
 var _pickable_object
+var _health_bar
 
+#==== Constants ====# 
+const _loot_type = 0 # 0:low, 1:mid, 2:high
+
+#==== Variables ====#
+var _is_player_in_attack_range
 
 
 
@@ -24,42 +30,68 @@ var _pickable_object
 func _ready():
 	set_process(false)
 	set_physics_process(false)
-	_enemy_manager = get_parent().get_parent()
 	
 	_sprite = $Sprite
 	_animation_tree = $Sprite/AnimationPlayer
 	_visibility_enabler = $VisibilityEnabler2D
-	
-#	_despawn_pos_x = _enemy_manager._despawn_pos_x
-#	_despawn_pos_y = _enemy_manager._despawn_pos_y
-	set_scale(Vector2(-0.8, 0.8))
-	
-	_player = get_tree().current_scene.get_node("Player")
 	_state_manager = $StandardState
 	_physics_manager = $StandardPhysics
-	_physics_manager.initialize(self, _player, position)
-	_state_manager.initialize(self)
 	_standard_hitbox = $StandardHitbox
+	_health_bar = $EnemyHealthBar
+	
+	_enemy_manager = get_parent().get_parent()
+	_player = get_tree().current_scene.get_node("Player")
+	_physics_manager.initialize(self, _player, position)
+	_physics_manager._facing_direction = 1
+	_state_manager.initialize(self)
 	_standard_hitbox.initialize(self)
 	_attack = preload("res://Enemies/EnemyList/Skeleton/SkeletonAttack.gd")
+	change_direction()
 
 func initialize_pickable_object(item):
 	_pickable_object = $PickableObject
 	_pickable_object.initialize(item)
 
 
+
+
 #==== State Handling ====#
 
 func _process(delta):
-	_state_manager.process_frame(delta)
+	_state_manager.process_frame()
+	handle_state_logic()
+
+
+func handle_state_logic():
+	_state_manager.check_if_can_move()
+	_is_player_in_attack_range = _physics_manager.handle_player_range() 
+	if not _state_manager._is_knockback \
+	and not _state_manager._current_action == "attack":
+		if _is_player_in_attack_range[0]:
+			_state_manager.set_state_attack()
+		elif _state_manager.should_turn_around():
+			change_direction()
+
+
+
+
+
 
 
 
 #==== Physics Handling ====#
 
 func _physics_process(delta):
-	var can_move = _state_manager.can_move()
+	var can_move = _state_manager._can_move
 	_physics_manager.process_frame(delta, position, can_move)
+
+func change_direction():
+	_sprite.scale.x *= -1
+	_physics_manager.change_direction()
+	_standard_hitbox.scale.x *= -1
+	_pickable_object.scale.x *= -1
+
+
 
 
 
@@ -73,10 +105,17 @@ func deal_damage(target_hurtbox):
 
 func receive_attack(target_hitbox):
 	var attack = target_hitbox.get_parent().get_current_attack_values()
-	_state_manager.receive_attack(target_hitbox, attack)
+	handle_attack(attack)
+	_state_manager.handle_damage_state()
 	_physics_manager.apply_knockback(target_hitbox, attack, position)
 
 
+func handle_attack(attack):
+	_state_manager._current_hp -= attack._damage
+	_state_manager._remaining_damage_until_stunlock  -= attack._damage
+	if _is_player_in_attack_range[1] \
+	and not _state_manager._current_action == "hurt":
+		change_direction()
 
 
 

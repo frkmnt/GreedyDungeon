@@ -52,7 +52,6 @@ func initialize_timeout_timer(duration):
 func on_stack(new_shield):
 	_is_removing = false
 	if _despawn_duration != null:
-		print("thats it ", _despawn_timer)
 		initialize_timeout_timer(_despawn_duration)
 
 

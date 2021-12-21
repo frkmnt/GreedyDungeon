@@ -9,7 +9,7 @@ var _object_data
 var _collision_shape
 
 #==== Constants ====#
-const _type = "item"
+const _type = "money"
 
 
 #==== Bootstrap ====#

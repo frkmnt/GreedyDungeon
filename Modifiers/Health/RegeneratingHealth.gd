@@ -5,7 +5,7 @@ extends Node2D
 const _id = 5
 const _modifier_ids = [1, 3] # tick, receive_attack
 const _name = "Regenerating Health"
-const _description = "Heals 1 HP every 10 seconds, if you don't receive damage." #refactor change qty
+const _description = "Heals 5 HP every 10 seconds, if you don't receive damage." #refactor change qty
 const _priority = 10
 
 #==== References ====#
@@ -21,7 +21,7 @@ var _needs_to_be_removed = false # not needed, self removal
 var _despawn_duration # time until despawn
 
 var _health_regen = 1
-var _tick_time = 3
+var _tick_time = 10
 
 
 
@@ -61,6 +61,7 @@ func on_stack(new_regenerating_health):
 		initialize_timeout_timer(_despawn_duration)
 
 func remove_modifier():
+	print("removing regen hp")
 	_needs_to_be_removed = true
 	_target._state_manager.remove_modifier(self)
 
@@ -76,6 +77,7 @@ func start_timer():
 	_timer.start(_tick_time)
 
 func on_tick():
+	print("on tick ", get_parent().name)
 	_timer.stop()
 	_target.add_hp(_health_regen)
 	_timer.start(_tick_time)

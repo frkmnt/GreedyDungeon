@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Assets/Visual/Potions/sprite_110.png" type="Texture" id=1]
+[ext_resource path="res://Objects/Potions/RegeneratingHealthPotion.gd" type="Script" id=2]
+
+[node name="RegeneratingHealthPotion" type="Sprite"]
+scale = Vector2( 0.4, 0.4 )
+texture = ExtResource( 1 )
+script = ExtResource( 2 )

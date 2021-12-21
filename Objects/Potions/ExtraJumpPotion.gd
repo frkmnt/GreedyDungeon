@@ -6,7 +6,7 @@ var _object_data
 
 #==== Bootstrap ====#
 
-func initialize(object_data):
+func initialize(object_data): 
 	var type = "item"
 	var id = 17
 	var name = "Extra Jump Potion"
@@ -22,7 +22,6 @@ func initialize(object_data):
 func use_item(player):
 	var modifier_manager = player._overseer._modifier_manager
 	var extra_jump = modifier_manager.get_modifier_instance(7)
-	extra_jump.initialize(player)
 	var was_added = player._state_manager.add_modifier(extra_jump)
 	if was_added:
 		extra_jump.initialize_timeout_timer(30)

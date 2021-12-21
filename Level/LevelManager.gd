@@ -6,7 +6,7 @@ var _enemy_manager
 
 # ==== Components ==== #
 var _map_generator
-var _money_generator
+var _loot_generator
 var _room_container
 
 var _limit_left
@@ -37,8 +37,8 @@ func initialize():
 
 
 func initialize_map_generator():
-	_money_generator = preload("res://Level/Generation/MoneyGenerator.gd").new()
-	_money_generator.initialize()
+	_loot_generator = preload("res://Level/Generation/LootGenerator/LootGenerator.gd").new()
+	_loot_generator.initialize()
 	_map_generator = $MapGenerator
 	_map_generator.initialize(self)
 
@@ -103,7 +103,6 @@ func handle_camera_position(p_pos):
 
 func handle_level_spawn(p_pos):
 	if p_pos >= _room_spawn_position:
-		print("p_pos ", p_pos)
 		#_enemy_manager.update_despawn_position(_room_spawn_position - 500) # TODO implement
 		_room_spawn_position = _room_spawn_position + room_width
 		_map_generator._semaphore.post()
@@ -122,7 +121,6 @@ func match_room_with_x_position(x_position): # returns the room that contains th
 	var matched_room = null
 	for room in _room_container.get_children():
 		if x_position <= room.position.x + room_width:
-			print("matched ", room.position.x)
 			matched_room = room
 			break
 	return matched_room

@@ -1,7 +1,6 @@
-[gd_scene load_steps=69 format=2]
+[gd_scene load_steps=68 format=2]
 
 [ext_resource path="res://Player/PlayerManager.gd" type="Script" id=1]
-[ext_resource path="res://Player/Animations/Shortsword/Shortsword.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Visual/Player/Movement/Idle/adventurer-idle-00.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Visual/Player/Movement/Fall/adventurer-fall-00.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Visual/Player/Movement/Fall/adventurer-fall-01.png" type="Texture" id=5]
@@ -123,6 +122,18 @@ tracks/1/keys = {
 "args": [  ],
 "method": "set_state_hurt_recovery"
 } ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../Hitbox/HitboxShape:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
 }
 
 [sub_resource type="Animation" id=4]
@@ -356,7 +367,7 @@ radius = 13.809
 height = 7.36656
 
 [sub_resource type="Animation" id=10]
-resource_name = "shortsword_neutral_ground"
+resource_name = "shortsword_down_ground"
 length = 0.34
 step = 0.02
 tracks/0/type = "value"
@@ -792,14 +803,10 @@ shape = SubResource( 1 )
 
 [node name="EffectContainer" type="Node" parent="."]
 
-[node name="Weapon" type="Node2D" parent="."]
-scale = Vector2( 1.25, 1.25 )
-script = ExtResource( 2 )
-
 [node name="ModifierContainer" type="Node2D" parent="."]
 
 [node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 33 )
+texture = ExtResource( 16 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite"]
 playback_process_mode = 0
@@ -810,7 +817,7 @@ anims/idle = SubResource( 4 )
 anims/jump = SubResource( 5 )
 anims/run = SubResource( 6 )
 anims/shortsword_down_air = SubResource( 8 )
-anims/shortsword_neutral_ground = SubResource( 10 )
+anims/shortsword_down_ground = SubResource( 10 )
 anims/shortsword_side_air = SubResource( 12 )
 anims/shortsword_side_ground = SubResource( 16 )
 anims/shortsword_up_air = SubResource( 18 )
@@ -822,8 +829,9 @@ collision_layer = 0
 collision_mask = 48
 
 [node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
-position = Vector2( 0, 8 )
-shape = SubResource( 7 )
+position = Vector2( 4.434, 4.906 )
+rotation = 0.959931
+shape = SubResource( 9 )
 disabled = true
 
 [node name="Hurtbox" type="Area2D" parent="."]
@@ -833,4 +841,5 @@ collision_mask = 68
 [node name="HurtboxShape" type="CollisionShape2D" parent="Hurtbox"]
 position = Vector2( -0.26514, 2.5263 )
 shape = SubResource( 22 )
+
 [connection signal="area_entered" from="Hurtbox" to="." method="touched_item"]

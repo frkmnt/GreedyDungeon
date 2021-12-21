@@ -38,7 +38,7 @@ var _jump_force = -12500
 
 
 #==== Meta Variables ====#
-var _max_hp = 5
+var _max_hp = 50
 var _current_hp = _max_hp
 
 var _i_frame_ticks = 4
@@ -69,7 +69,7 @@ var _modifier_type_list = []
 func initialize(parent_class):
 	_player = parent_class
 	_animator = _player._animator
-	_weapon = _player._weapon
+	_weapon = _player._inventory._weapon
 	_modifier_container = _player._modifier_container
 	initialize_modifier_map()
 	initialize_i_frames()
@@ -176,45 +176,45 @@ func handle_attack_action(action_input):
 		print("EXIT_GAME")
 	else:
 		_current_action = "attack"
+		var anim_to_play
 		_can_move = false
 		if _is_on_floor:
-			
-			match action_input: # TODO WEAPONS ARE TO CHANGE POSITION EACH ANIMATION KEYFRAME
+			match action_input:
 				"neutral":
-					_weapon.neutral_ground()
+					anim_to_play = _weapon.generate_new_attack("down_ground")
 				"up":
-					_weapon.up_ground()
+					anim_to_play = _weapon.generate_new_attack("up_ground")
 				"left":
 					if _facing_direction == 1:
 						_player.change_direction()
 						_facing_direction = -1
-					_weapon.side_ground()
+					anim_to_play = _weapon.generate_new_attack("side_ground")
 				"right":
 					if _facing_direction == -1:
 						_player.change_direction()
 						_facing_direction = 1
-					_weapon.side_ground()
+					anim_to_play = _weapon.generate_new_attack("side_ground")
 				"down":
-					_weapon.neutral_ground()
-		
+					anim_to_play = _weapon.generate_new_attack("down_ground")
 		else:
 			match action_input:
 				"neutral":
-					_weapon.side_air()
+					anim_to_play = _weapon.generate_new_attack("side_air")
 				"up":
-					_weapon.up_air()
+					anim_to_play = _weapon.generate_new_attack("up_air")
 				"left":
 					if _facing_direction == 1:
 						_player.change_direction()
 						_facing_direction = -1
-					_weapon.side_air()
+					anim_to_play = _weapon.generate_new_attack("side_air")
 				"right":
 					if _facing_direction == -1:
 						_player.change_direction()
 						_facing_direction = 1
-					_weapon.side_air()
+					anim_to_play = _weapon.generate_new_attack("side_air")
 				"down":
-					_weapon.down_air()
+					anim_to_play = _weapon.generate_new_attack("down_air")
+		_player._animator.play(anim_to_play)
 
 
 
@@ -253,6 +253,8 @@ func receive_attack(attack, attacker_pos):
 	attack = handle_receive_attack_modifiers(attack)
 	
 	_current_hp -= attack._damage
+	if _current_hp < 0:
+		_current_hp = 0
 	
 	var new_knockback = Vector2(0, attack._knockback_force.y)
 	var is_enemy_on_right = _player.position.x < attacker_pos.x
@@ -314,12 +316,14 @@ func add_modifier(new_modifier):
 
 
 func remove_modifier(modifier):
+	print("removing mods")
 	var modifier_map
 	var cur_modifier
 	for modifier_type_id in modifier._modifier_ids:
 		# print("removing modifier: ", modifier_type_id)
 		modifier_map = _modifier_type_list[modifier_type_id]
 		modifier_map.erase(modifier._id)
+	_modifier_container.remove_child(modifier)
 
 func remove_modifiers(modifier_list):
 	for modifier in modifier_list:
