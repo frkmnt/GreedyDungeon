@@ -69,6 +69,6 @@ TODO:
 * Hub
   * Customize hero.
   * Buy/sell Items.
-	* Purchase/upgrade heroes.
+  * Purchase/upgrade heroes.
 	
 
